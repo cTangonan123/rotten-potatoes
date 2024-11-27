@@ -1,0 +1,30 @@
+{
+  "name": "cst336-rotten-potatoes",
+  "version": "1.0.0",
+  "description": "CST336: Final Project for Team 8, a movie review website",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.mjs",
+    "server": "nodemon index.mjs",
+    "build-css": "sass public/css/styles.scss public/css/styles.css",
+    "watch-css": "sass --watch public/css/styles.scss public/css/styles.css"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bootstrap": "^5.3.3",
+    "dotenv": "^16.4.5",
+    "ejs": "^3.1.10",
+    "express": "^4.21.1",
+    "mysql2": "^3.11.4"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7",
+    "sass": "^1.81.0"
+  }
+}
