@@ -13,16 +13,16 @@ app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 // app.use(express.json());                       // Parse JSON bodies
 
 
-const pool = mysql.createPool({                   // Create a pool to connect to the database
-  host: process.env.QUOTE_DB_HOST,
-  user: process.env.QUOTE_DB_USER,
-  password: process.env.QUOTE_DB_PASSWORD,
-  database : process.env.QUOTE_DB_NAME,
-  connectionLimit: 10,
-  waitForConnections: true
-});
+// const pool = mysql.createPool({                   // Create a pool to connect to the database
+//   host: process.env.DB_HOST,
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   database : process.env.DB_NAME,
+//   connectionLimit: 10,
+//   waitForConnections: true
+// });
 
-const conn = await pool.getConnection();          // Get a connection from the pool
+// const conn = await pool.getConnection();          // Get a connection from the pool
 
 app.get('/', async (req, res) => {
   res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
