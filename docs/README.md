@@ -1,4 +1,5 @@
 # Table of Contents
+\<\< [Back to Main Page](/README.md)
 - [TODO's List](/docs/plan/TODO.md)
 - [View Diagrams](/docs/plan/diagrams/view.md)
 - [State Diagrams](/docs/plan/diagrams/state.md)
@@ -55,3 +56,7 @@ As a note: We were unable to make contact with [Ranjita Kaur](mailto:rsumman@csu
 
 ---
 ![TODOs](/docs/plan/TODO.md#todo-list)
+
+---
+<sub>\< [Back to Docs](/docs/README.md)</sub>
+<sub>\<\< [Back to Main Page](/README.md)</sub>
