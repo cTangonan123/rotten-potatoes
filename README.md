@@ -31,10 +31,10 @@ PORT=3000
 OMDB_API_KEY=your_api_key
 
 # DB Connection Info
-QUOTE_DB_HOST=host_name_goes_here
-QUOTE_DB_USER=db_username_goes_here
-QUOTE_DB_PASSWORD=db_password_goes_here
-QUOTE_DB_NAME=db_name_goes_here
+DB_HOST=host_name_goes_here
+DB_USER=db_username_goes_here
+DB_PASSWORD=db_password_goes_here
+DB_NAME=db_name_goes_here
 ```
 4) if you look at the `package.json` file, you'll see that I've included some scripts to make some commands easier to remember, you can call them using `npm run script-name`
 for example: the call for `nodemon index.js` to run the server is just:
