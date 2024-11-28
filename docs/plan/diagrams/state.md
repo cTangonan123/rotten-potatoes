@@ -47,9 +47,6 @@ sequenceDiagram
 
 ---
 ## State: [Login View](/docs/plan/diagrams/view.md#view-login-page) User Clicks New User
-
-
-
 ```mermaid
 ---
 config:
@@ -71,12 +68,12 @@ sequenceDiagram
   V->>+ CS-JS: User Clicks submit button
   CS-JS ->>- SS: send inputs as <br>Post Request
   SS ->>+ DB: send query to DB <br>see if user in db
-  DB ->>+ SS: respond with query
+  DB ->>- SS: respond with query
   alt if response not OK || query returns non-empty
-    SS ->>- CS-JS: send error message
-    CS-JS ->> V: update modal with input vaidation
+    SS ->>+ CS-JS: send error message
+    CS-JS ->>- V: update modal with input vaidation
   else if response OK &&<br> query returns empty
-    SS ->>- V: render login all over
+    SS ->> V: render login all over
   end
   box transparent Client-Side
     
@@ -88,6 +85,8 @@ sequenceDiagram
     participant DB
   end
   ```
+  ---
+  ## State: 
 
 
 
