@@ -6,8 +6,22 @@
 ## State: [Login View](/docs/plan/diagrams/view.md#view-login-page) with sign-in click
 ```mermaid
 ---
+
 config:
-  theme: neutral
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+
 ---
 sequenceDiagram
   actor A1 as User
@@ -34,12 +48,12 @@ sequenceDiagram
     SS ->>+ altV: Valid, redirect to Main View
     
   end
-  box transparent Client-Side
+  box darkgrey Client-Side
   participant altV
   participant V
   participant CS-JS
   end
-  box transparent Server-Side
+  box darkgrey Server-Side
   participant SS
   participant DB
   end
@@ -49,8 +63,22 @@ sequenceDiagram
 ## State: [Login View](/docs/plan/diagrams/view.md#view-login-page) User Clicks New User
 ```mermaid
 ---
+
 config:
-  theme: neutral
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+
 ---
 sequenceDiagram
   actor A1 as User
@@ -75,18 +103,227 @@ sequenceDiagram
   else if response OK &&<br> query returns empty
     SS ->> V: render login all over
   end
-  box transparent Client-Side
+  box darkgrey Client-Side
     
     participant V
     participant CS-JS
   end
-  box transparent Server-Side
+  box darkgrey Server-Side
     participant SS
     participant DB
   end
   ```
-  ---
-  ## State: 
+---
+## State: [Search View](/docs/plan/diagrams/view.md#view-movie-search) User Inputs and Clicks Search Button
+```mermaid
+---
+config:
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+---
+
+sequenceDiagram
+  actor U as User
+  participant altV as movieDescription.ejs
+  participant V as searchContent.ejs
+  participant cJS as client-side.js
+  participant SS as index.mjs
+  participant DB as database
+  participant API as omdb's API
+  autonumber
+  U ->> V: User inputs:<br>search<br>typeOfContent<br>&<br>click's search button
+  alt input validation
+    V->>cJS: search="" [invalid]
+    cJS->>V: update view showing invalidity
+  else
+    V->>cJS: search="*" [valid]
+    cJS->>+SS: POST Request to server for:<br>search & type
+  end
+  SS->>+API: GET Request of<br>search & type
+  
+  API->>-SS: GET Response
+  alt empty GET response
+    SS->>-cJS: POST Repsonse
+    cJS->>V: update view showing no response
+  else valid GET response
+    SS->>altV: redirect to movieDescription.ejs
+  end
+
+  box darkgrey Client-Side
+    #participant altV
+    participant V
+    participant cJS
+  end
+  box darkgrey Server-Side
+    participant SS
+    participant DB
+  end
+```
+## [Search Results View](/docs/plan/diagrams/view.md#view-search-results)
+```mermaid
+---
+
+config:
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+
+---
+sequenceDiagram
+  actor U as User
+  #participant altV as movieDescription.ejs
+  participant V as searchResults.ejs
+  participant cJS as client-side.js
+  #participant SS as index.mjs
+  #participant DB as database
+  #participant API as omdb's API
+  autonumber
+  U ->> V: User clicks write review button
+  V ->> cJS: click event sent<br> [stop propogation]
+  cJS ->> V: review Modal triggered
+  box grey Client-Side
+    #participant altV
+    participant V
+    participant cJS
+  end
+  #box grey Server-Side
+    #participant SS
+    #participant DB
+  #end
+```
+---
+## [Search Results View: Review Modal](/docs/plan/diagrams/view.md#view-movie-review-form)
+```mermaid
+---
+
+config:
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    #sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+    
+---
+
+sequenceDiagram
+  actor U as User
+  #participant altV as movieDescription.ejs
+  participant V as searchResults.ejs
+  participant cJS as client-side.js
+  participant SS as index.mjs
+  participant DB as database
+  participant API as omdb's API
+  autonumber
+  U ->> V: User inputs:<br>title & rating & review<br>clicks submit on modal
+  V->>cJS: 
+  cJS ->> SS: POST Request<br>data: title, rating, review, movie_id
+  SS ->>+ DB: query if movie_id<br> exists in movie table
+  DB ->> SS: response
+  alt doesn't exist in DB
+    SS->>API: GET request for movie details
+    API->>SS: GET response for movie detals
+    SS->>DB: insert movie into movie table
+  end
+  SS->>DB: insert review into DB
+  SS->>cJS: POST Response
+  alt response not ok
+    cJS->>V: show alert indicating review not recorded
+  else response ok
+    cJS->>V: close Modal, show Toast indicating review recorded
+  end
+
+
+  box grey Client-Side
+    #participant altV
+    participant V
+    participant cJS
+  end
+  box grey Server-Side
+    participant SS
+    participant DB
+  end
+```
+---
+## [View Edit User: username update](/docs/plan/diagrams/view.md#view-edit-user)
+```mermaid
+---
+
+config:
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    #sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+    
+---
+sequenceDiagram
+  actor U as User
+  #participant altV as movieDescription.ejs
+  participant V as editUser.ejs
+  participant cJS as client-side.js
+  participant SS as index.mjs
+  participant DB as database
+  #participant API as omdb's API
+  autonumber
+  U ->> V: User inputs:<br>new username<br>clicks Update for username
+  V->>cJS: input validation
+  alt input invalid
+    cJS->>V: update view<br>indicating invalidation
+  else input valid
+    cJS->>SS: POST Request<br>update username
+  end
+  SS->>DB: insert new value into username
+  DB->>SS: query response
+  SS->>cJS: POST Response
+  cJS->>V: display toast<br>username changed
+  box grey Client-Side
+    #participant altV
+    participant V
+    participant cJS
+  end
+  box grey Server-Side
+    participant SS
+    participant DB
+  end
+
+```
 
 
 
