@@ -1,12 +1,11 @@
-# State Diagrams
+# Sequence Diagrams
 ## Resources
 - [mermaidchart](https://www.mermaidchart.com/landing?utm_source=google_ads&utm_medium=primary_search&utm_campaign=markdownfocus-US&gad_source=1&gclid=Cj0KCQiAgJa6BhCOARIsAMiL7V_qx7LTRMCpA4KrpHJeeZg82YthBNYfP-ypsQgVA6MVsWzpbXP6NNEaAsKAEALw_wcB): mermaid chart application that allows click and drag for different types of diagrams
 
 ---
-## State: [Login View](/docs/plan/diagrams/view.md#view-login-page) with sign-in click
+## [Login View](/docs/plan/diagrams/view.md#view-login-page) with sign-in click
 ```mermaid
 ---
-
 config:
   theme: neo-dark
   themeVariables:
@@ -21,7 +20,6 @@ config:
     labelBoxBorderColor: "#ffc107"
     labelTextColor: white
     loopTextColor: white
-
 ---
 sequenceDiagram
   actor A1 as User
@@ -60,10 +58,9 @@ sequenceDiagram
 ```
 
 ---
-## State: [Login View](/docs/plan/diagrams/view.md#view-login-page) User Clicks New User
+## [Login View](/docs/plan/diagrams/view.md#view-login-page) User Clicks New User
 ```mermaid
 ---
-
 config:
   theme: neo-dark
   themeVariables:
@@ -78,7 +75,6 @@ config:
     labelBoxBorderColor: "#ffc107"
     labelTextColor: white
     loopTextColor: white
-
 ---
 sequenceDiagram
   actor A1 as User
@@ -114,7 +110,7 @@ sequenceDiagram
   end
   ```
 ---
-## State: [Search View](/docs/plan/diagrams/view.md#view-movie-search) User Inputs and Clicks Search Button
+## [Search View](/docs/plan/diagrams/view.md#view-movie-search) User Inputs and Clicks Search Button
 ```mermaid
 ---
 config:
@@ -173,7 +169,6 @@ sequenceDiagram
 ## [Search Results View](/docs/plan/diagrams/view.md#view-search-results)
 ```mermaid
 ---
-
 config:
   theme: neo-dark
   themeVariables:
@@ -188,7 +183,6 @@ config:
     labelBoxBorderColor: "#ffc107"
     labelTextColor: white
     loopTextColor: white
-
 ---
 sequenceDiagram
   actor U as User
@@ -216,7 +210,6 @@ sequenceDiagram
 ## [Search Results View: Review Modal](/docs/plan/diagrams/view.md#view-movie-review-form)
 ```mermaid
 ---
-
 config:
   theme: neo-dark
   themeVariables:
@@ -230,8 +223,7 @@ config:
     labelBoxBkgColor: "#20c997"
     labelBoxBorderColor: "#ffc107"
     labelTextColor: white
-    loopTextColor: white
-    
+    loopTextColor: white   
 ---
 
 sequenceDiagram
@@ -274,9 +266,9 @@ sequenceDiagram
 ```
 ---
 ## [View Edit User: username update](/docs/plan/diagrams/view.md#view-edit-user)
+- as a note updating of password should be similar, simply replace any instance of username with password instead
 ```mermaid
 ---
-
 config:
   theme: neo-dark
   themeVariables:
@@ -290,8 +282,7 @@ config:
     labelBoxBkgColor: "#20c997"
     labelBoxBorderColor: "#ffc107"
     labelTextColor: white
-    loopTextColor: white
-    
+    loopTextColor: white  
 ---
 sequenceDiagram
   actor U as User
@@ -324,6 +315,100 @@ sequenceDiagram
   end
 
 ```
+
+---
+## [View User Edit: an Edit Review is clicked](/docs/plan/diagrams/view.md#view-edit-user)
+```mermaid
+---
+config:
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    #sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+---
+sequenceDiagram
+  actor U as User
+  #participant altV as movieDescription.ejs
+  participant V as editUser.ejs
+  participant cJS as client-side.js
+  participant SS as index.mjs
+  participant DB as database
+  #participant API as omdb's API
+  autonumber
+  U ->> V: User clicks edit button<br>on a review
+  V->> cJS: handle event
+  cJS->> SS: POST Request for full Review info
+  SS->>DB: query review details
+  DB->>SS: query Response
+  SS->>cJS: POST Response
+  cJS->>V: modal to edit pops up<br> pre-filled with data from database
+  box grey Client-Side
+    #participant altV
+    participant V
+    participant cJS
+  end
+  box grey Server-Side
+    participant SS
+    participant DB
+  end
+```
+---
+## [View User Edit: an Edit Review Modal is Filled and Submitted](/docs/plan/diagrams/view.md#view-edit-user)
+```mermaid
+---
+config:
+  theme: neo-dark
+  themeVariables:
+    actorBkg: "#0d6efd"
+    actorBorder: white
+    actorTextColor: white
+    primaryColor: "#0d6efd"
+    signalColor: "#0dcaf0"
+    #sequenceNumberColor: "#0dcaf0"
+    signalTextColor: white
+    labelBoxBkgColor: "#20c997"
+    labelBoxBorderColor: "#ffc107"
+    labelTextColor: white
+    loopTextColor: white
+---
+sequenceDiagram
+  actor U as User
+  #participant altV as movieDescription.ejs
+  participant V as editUser.ejs
+  participant cJS as client-side.js
+  participant SS as index.mjs
+  participant DB as database
+  #participant API as omdb's API
+  autonumber
+  U ->> V: User Edits old Review<br> in edit modal
+  V->> cJS: handle event
+  cJS->> SS: POST Request to UPDATE Review
+  SS->>DB: query UDPATE review details
+  DB->>SS: query Response of UDPATE
+  SS->>cJS: POST Response of UPDATE
+  cJS->>V: toast shown<br>Review has been updated
+  box grey Client-Side
+    #participant altV
+    participant V
+    participant cJS
+  end
+  box grey Server-Side
+    participant SS
+    participant DB
+  end
+```
+---
+
+
 
 
 
