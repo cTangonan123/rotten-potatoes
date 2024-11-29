@@ -253,6 +253,7 @@ sequenceDiagram
     cJS->>V: close Modal, show Toast indicating review recorded
   end
 
+  links SS: {"Dashboard": "https://dashboard.contoso.com/alice", "document": "/index.mjs"}
 
   box grey Client-Side
     #participant altV
