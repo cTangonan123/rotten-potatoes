@@ -29,7 +29,7 @@ sequenceDiagram
   participant SS as index.mjs
   participant DB as database
 
-  links SS: {"Dashboard": "https://dashboard.contoso.com/alice", "document": "/index.mjs"}
+  links index.mjs: {"Dashboard": "https://dashboard.contoso.com/alice", "document": "/index.mjs"}
   
   autonumber
   A1 ->> V: User clicks Sign in Button
