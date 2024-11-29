@@ -28,6 +28,9 @@ sequenceDiagram
   participant CS-JS as client-side.js
   participant SS as index.mjs
   participant DB as database
+
+  links SS: {"Dashboard": "https://dashboard.contoso.com/alice", "document": "/index.mjs"}
+  
   autonumber
   A1 ->> V: User clicks Sign in Button
   alt input not valid
