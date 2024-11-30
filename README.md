@@ -27,8 +27,12 @@ $ touch .env
 # can be changed to a port you'll be using:
 PORT=3000
 
-# reference: https://www.omdbapi.com , requires api key
+# reference: https://www.omdbapi.com , *requires* api key
 OMDB_API_KEY=your_api_key
+
+# reference: https://developer.themoviedb.org, *requires* api key
+TMDB_API_KEY=your_api_key
+TMDB_READ_ACCESS_TOKEN=your_read_access_token_here
 
 # DB Connection Info
 DB_HOST=host_name_goes_here

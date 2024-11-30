@@ -9,12 +9,12 @@
 - Title of the Project: **Rotten Potatoes**
 - Description of the plan:
 - Generate diagrams:
-  - ER Diagram:
-  - Views Diagrams
+  - [ER Diagram](/docs/plan/diagrams/er.md): 
+  - [Views Diagrams](/docs/plan/diagrams/view.md)
     - Will be Done by Arielle
-  - State Diagram(s)
+  - [State Diagram(s)](/docs/plan/diagrams/state.md)
     - Will be Done by Chris
-  - UI Diagram
+  - [UI Diagram](/docs/plan/diagrams/ui.md)
     - Will be Done by Alex
 ## How We Plan to Address Each Requirement:
 ### Minimum Requirements
@@ -47,8 +47,10 @@
   - Client-side JS handles user input validation.
 - The project includes at least two local or external Web API’s
   - Local: database
-  - External: [https://www.omdbapi.com/](https://www.omdbapi.com/)
+  - External: [https://www.omdbapi.com/](https://www.omdbapi.com/) or [The Movie Database(better and works with justwatch)](https://developer.themoviedb.org)
+
   - [https://quoteapi.pythonanywhere.com/](https://quoteapi.pythonanywhere.com/)
+  - for streaming available[https://apis.justwatch.com/docs/api/](https://apis.justwatch.com/docs/api/)
 - Project looks professional with consistent design, free of typos, and at least 50 CSS properties or bootstrap
   - We’ll be using bootstrap
 
