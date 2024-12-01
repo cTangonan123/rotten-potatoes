@@ -4,6 +4,7 @@
 - [View Diagrams](/docs/plan/diagrams/view.md)
 - [State Diagrams](/docs/plan/diagrams/state.md)
 - [UI Diagrams](/docs/plan/diagrams/ui.md)
+- [API Notes](/docs/plan/API%20Notes.md)
 
 ## Overall Plan
 - Title of the Project: **Rotten Potatoes**
@@ -20,7 +21,7 @@
 ### Minimum Requirements
   - **Title:** Rotten Potatoes
   - **Description:**
-    - We’ll be utilizing NodeJS, Express, mySQL, Bootstrap and EJS for our project. Our project will be themed around movie review sites such as: Rotten Tomato, IMDB, Metacritic etc. Where the user is able to login via username and password, select and choose movies to review. We’ll be storing the reviews in an external database using mySQL, and also an external web api referring to [https://www.omdbapi.com](https://www.omdbapi.com) . At minimum it seems as we’ll require 4 separate views, One for logging in, one main page where the user can search for movies, another in which lists the movie description along with a list of reviews for the designated movie that has a button trigger initializing a modal that allows the user to record their review. Another page in which the user can view all the reviews they have submitted with the capability to edit via modal popup.
+    - We’ll be utilizing NodeJS, Express, mySQL, Bootstrap and EJS for our project. Our project will be themed around movie review sites such as: Rotten Tomato, IMDB, Metacritic etc. Where the user is able to login via username and password, select and choose movies to review. We’ll be storing the reviews in an external database using mySQL, and also an external web api referring to [https://developer.themoviedb.org](https://developer.themoviedb.org) . At minimum it seems as we’ll require 4 separate views, One for logging in, one main page where the user can search for movies, another in which lists the movie description along with a list of reviews for the designated movie that has a button trigger initializing a modal that allows the user to record their review. Another page in which the user can view all the reviews they have submitted with the capability to edit via modal popup.
   - Task Distribution
     - For Chris and Arielle we’ll be working on both front-end and back-end to maintain an overall perspective of the program
   - Changes from the Original Design(for final submission)
@@ -54,7 +55,7 @@
 - Project looks professional with consistent design, free of typos, and at least 50 CSS properties or bootstrap
   - We’ll be using bootstrap
 
-As a note: We were unable to make contact with [Ranjita Kaur](mailto:rsumman@csumb.edu) for this assignment via email or canvas, If there are any other alternate emails or contact information could you please let us know.**
+
 
 ---
 ![TODOs](/docs/plan/TODO.md#todo-list)
