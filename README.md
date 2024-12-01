@@ -1,6 +1,7 @@
 # Rotten Potatoes
 ## Table of Contents
 - [Build Instructions](#build-instruction)
+- [Git Instructions](#git-instructions)
 - **Documents** 
   - [Documents](/docs/README.md)
   - [TODO List](/docs/plan/TODO.md)
@@ -52,3 +53,45 @@ npm run build-css
 npm run watch-css
 ```
 ---
+## Git Instructions
+our `feature` branch will act as our ordered sandbox, where we push and pull from regularly. consider `dev_branch` the branch you intend to work in.
+- when pushing to feature do a self check and ensure all components are working as intended, upon successful push to `feature` let team know via discord
+- pull from feature regularly to get the most up to date code
+- we'll reserve pushes to `main`, after full team review.
+```mermaid
+gitGraph
+    commit
+    branch feature
+    checkout feature
+    commit id: "pull from feature"
+    checkout main
+    merge feature
+    checkout feature 
+    branch dev_branch
+    checkout dev_branch
+    commit
+    commit
+    checkout feature
+    merge dev_branch id: "pull & push to feature"
+    checkout main
+    merge feature
+    checkout feature
+    checkout dev_branch
+    commit
+    checkout feature
+    branch teammate_dev_branch
+    checkout teammate_dev_branch
+    commit
+    commit
+    checkout feature
+    merge teammate_dev_branch id: "push to feature from teammate_dev_branch"
+    checkout dev_branch
+    checkout feature
+    merge dev_branch id: "push to feature from dev_branch"
+    checkout main
+    merge feature
+
+    
+
+
+```
