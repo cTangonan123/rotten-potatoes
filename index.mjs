@@ -10,21 +10,26 @@ app.set('view engine', 'ejs');                    // Set the view engine
 app.use(express.static('public'));                // Serve static files from the public folder
 
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
-// app.use(express.json());                       // Parse JSON bodies
+app.use(express.json());                          // Parse JSON bodies
 
 
-// const pool = mysql.createPool({                   // Create a pool to connect to the database
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database : process.env.DB_NAME,
-//   connectionLimit: 10,
-//   waitForConnections: true
-// });
+const pool = mysql.createPool({                   // Create a pool to connect to the database
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database : process.env.DB_NAME,
+  connectionLimit: 10,
+  waitForConnections: true
+});
 
-// const conn = await pool.getConnection();          // Get a connection from the pool
+const conn = await pool.getConnection();          // Get a connection from the pool
 
 app.get('/', async (req, res) => {
+  let sql = 'SELECT * FROM user';                // SQL query to select all the users
+  const [rows] = await conn.execute(sql);         // Execute the query
+  for (let row of rows) {
+    console.log(row);                             // Print the rows
+  }
   res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
 });
 
