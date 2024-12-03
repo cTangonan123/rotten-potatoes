@@ -41,13 +41,44 @@ CREATE TABLE `movie` (
 );
 
 
+CREATE TABLE `watchlist` (
+	`user_id` INTEGER NOT NULL,
+	`movie_id` INTEGER NOT NULL,
+	PRIMARY KEY(`user_id`, `movie_id`)
+);
+
+
 ALTER TABLE `user`
 ADD FOREIGN KEY(`id`) REFERENCES `reviews`(`user_id`)
 ON UPDATE NO ACTION ON DELETE NO ACTION;
 ALTER TABLE `movie`
 ADD FOREIGN KEY(`id`) REFERENCES `reviews`(`movie_id`)
 ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE `user`
+ADD FOREIGN KEY(`id`) REFERENCES `watchlist`(`user_id`)
+ON UPDATE NO ACTION ON DELETE NO ACTION;
+ALTER TABLE `movie`
+ADD FOREIGN KEY(`id`) REFERENCES `watchlist`(`movie_id`)
+ON UPDATE NO ACTION ON DELETE NO ACTION;
 ```
+
+---
+## Example SQL Queries
+### Query a movie by id
+```sql
+SELECT * FROM movie where id = ?
+```
+### Query user by id
+```sql
+SELECT * FROM user where id = ?
+```
+### Query watchlist by user_id
+```sql
+SELECT * FROM watchlist where user_id = ?
+```
+### Insert a row to a table
+### Updating a value in a row
+### Deleting a row
 ---
 <sub>\< [Back to Docs](/docs/README.md)</sub>
 <sub>\<\< [Back to Main Page](/README.md)</sub>
