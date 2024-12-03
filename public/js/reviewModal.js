@@ -46,11 +46,11 @@ document.querySelector("#reviewModal").addEventListener('submit', async(e) => {
   console.log("clicked")
   // get all values
   
-  let el_movie_id = document.querySelector("#rMovieId").value
-  let el_user_id = document.querySelector("#rUserId").value
-  let el_title = document.querySelector("#rTitle").value
-  let el_rating = document.querySelector("#rRating").value
-  let el_review = document.querySelector("#rReview").value
+  let el_movie_id = document.querySelector("#rMovieId")
+  let el_user_id = document.querySelector("#rUserId")
+  let el_title = document.querySelector("#rTitle")
+  let el_rating = document.querySelector("#rRating")
+  let el_review = document.querySelector("#rReview")
   if (el_rating.value == "" || el_review.value == "" || el_title.value == "" || el_rating.value > 10 || el_rating.value < 0) {
     alert("Please fill out all fields")
     return
