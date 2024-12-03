@@ -33,6 +33,22 @@ app.get('/', async (req, res) => {
   res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
 });
 
+app.get('/search/results', async (req, res) => {
+  const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`
+    }
+  };
+
+  let response = await fetch(url, options);
+  let data = await response.json();
+    
+  res.render('searchResults', { "shows": data.results });
+});
+
 app.listen(process.env.PORT, () => {                // Start the server
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
 });
