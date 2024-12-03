@@ -7,6 +7,13 @@
   <title>Document</title>
   <link rel="stylesheet" href="/css/styles.css">
   <link rel="stylesheet" href="/css/custom.css">
+
+  <!-- js -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  
+  <!-- icons -->
+  <script src="https://kit.fontawesome.com/22e6516969.js" crossorigin="anonymous"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 </head>
 
 <body>
@@ -20,12 +27,52 @@
             <div class="card h-100">
               <a href="">
                 <div class="more-info bg-black rounded-pill px-3 py-1">More Info</div>
-                <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://static.vecteezy.com/system/resources/previews/002/236/321/non_2x/movie-trendy-banner-vector.jpg" alt="Poster Missing">
+                <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://image.tmdb.org/t/p/w500<%=show.backdrop_path%>" alt="image from <%=show.title%>">
               </a>
               <div class="card-body">
-                <h5 class="card-title"><%= show.title %></h5>
-                <p class="card-text">Lorem, ipsum dolor sit amet consectetur adipisicing elit.</p>
-                <a href="#" class="write-review-btn btn">Write Review</a> <a href="#" class="float float-end pt-2 text-dark">Read Reviews</a>
+                <!-- <h5 class="card-title"><%= show.title %></h5>
+                <p class="card-text"><%= show.overview %></p>
+                <div class="mb-0 mt-auto bg-primary">
+                  <a href="#" class="write-review-btn btn" data-id="<%=show.id%>">Write Review</a> 
+                  <a href="#" class="float float-end pt-2 text-dark">Read Reviews</a>
+                </div> -->
+                <h5 class="card-title text-truncate"><%=show.title%></h5>
+                <p class="card-text d-block w-100 overflow-auto w-100" style="height:10rem"><%=show.overview%></p>
+                <div class="container-fluid">
+                  <div class="row justify-content-between align-items-end">
+                    <div class="col col-6">
+                      <a
+                        name="addToWatchList"
+                        id="addToWatchList"
+                        class="btn btn-primary w-100 write-review-btn"
+                        href="#"
+                        role="button"
+                        data-movie-id=<%=show.id%>
+                        >
+                        <i class="bi bi-bookmark-plus-fill"></i>
+                        Watchlist
+                        </a
+                      >
+                      
+                    </div>
+                    <div class="col col-6">
+                      <a
+                        name=""
+                        id="writeReview"
+                        class="btn btn-primary w-100 write-review-btn"
+                        href="#"
+                        role="button"
+                        data-movie-id=<%=show.id%>
+                        >
+                        <i class="bi bi-file-earmark-text"></i>
+                        Review
+                        </a
+                      >
+                      
+                    </div>
+
+                  </div>
+                </div>
               </div>
             </div>
           </div>
@@ -33,6 +80,11 @@
       </div>
     </div>
   </div>
+
+  <!-- Modal -->
+  <%- include("partials/reviewModal.ejs") %>
+  
+
 
 </body>
 
