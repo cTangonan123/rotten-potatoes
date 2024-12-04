@@ -100,23 +100,66 @@ app.post('/submitReview', async (req, res) => {
   console.log(req.body);
   // getting the values from the form
   const { movie_id, user_id, title, rating, review } = req.body;
+
+  // check if movie exists in database movie table, if it doesn't, pull from TMDB API and insert into database
+  let sqlMovie = `SELECT * FROM movie WHERE id = ?`;
+  const [rows] = await conn.query(sqlMovie, [movie_id]);
+  if (rows.length === 0) {
+    const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
+    const options = {
+      method: 'GET',
+      headers: {
+        accept: 'application/json',
+        Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`
+      }
+    };
+
+    let result = await fetch(url, options)
+      .then(res => res.json())
+      .then(data => {
+        console.log(data);
+        return data;
+        
+      }) // where to do stuff
+      .catch(err => console.error(err));
+    
+    sqlMovie = `INSERT INTO movie (
+      id, title, release_date, overview, backdrop_path, poster_path, vote_average
+    ) VALUES (
+      ?, ?, ?, ?, ?, ?, ?
+    )`;
+    await conn.query(sqlMovie, [result.id, result.title, result.release_date, result.overview, result.backdrop_path, result.poster_path, result.vote_average]);
+  }
   
   // inserting the values into the database
-  // TODO: check first if movie is in database 
+  /* check first if movie is in database 
   // then check if the user has already submitted a review for this movie
-  // if they have, update the review instead of inserting a new one
-  let sql = `INSERT INTO reviews (movie_id, user_id, title, rating, review) VALUES (?, ?, ?, ?, ?)`;
-  await conn.query(sql, [movie_id, user_id, title, rating, review])
-    .then(() => console.log('Review submitted!'))
-    .catch(err => console.error(err));
+  // if they have, update the review instead of inserting a new one */
+
+  // check if user has already submitted a review for this movie, if they have, update the review, if not, insert a new one
+  let sqlReviewCheck = `SELECT count(*) as count FROM reviews WHERE movie_id = ? AND user_id = ?`;
+  const [count] = await conn.query(sqlReviewCheck, [movie_id, user_id]);
+  if (count[0].count > 0) {
+    let sqlReviewUpdate = `UPDATE reviews SET title = ?, rating = ?, review = ? WHERE movie_id = ? AND user_id = ?`;
+    await conn.query(sqlReviewUpdate, [title, rating, review, movie_id, user_id])
+  } else {
+    let sqlReview = `INSERT INTO reviews (movie_id, user_id, title, rating, review) VALUES (?, ?, ?, ?, ?)`;
+    await conn.query(sqlReview, [movie_id, user_id, title, rating, review])
+      .then(() => console.log('Review submitted!'))
+      .catch(err => console.error(err));
+  }
     
   // inserting movie to the watchlist when review is submitted.
-  let sqlWatchList = `INSERT INTO watchlist (movie_id, user_id) VALUES (?, ?)`;
-  await conn.query(sqlWatchList, [movie_id, user_id])
-    .then(() => console.log('Movie added to watchlist!'))
-    .catch(err => console.error(err));
+  let sqlWatchListCheck = `SELECT count(*) as count FROM watchlist WHERE movie_id = ? AND user_id = ?`;
+  const [count2] = await conn.query(sqlWatchListCheck, [movie_id, user_id]);
+  if (count2[0].count === 0) {
+    let sqlWatchList = `INSERT INTO watchlist (movie_id, user_id) VALUES (?, ?)`;
+    await conn.query(sqlWatchList, [movie_id, user_id])
+      .then(() => console.log('Movie added to watchlist!'))
+      .catch(err => console.error(err));
+  }
   
-  res.json({ message: 'Review submitted!' });
+  res.json({ message: 'Database has been updated' });
 });
 
 

@@ -191,7 +191,7 @@ sequenceDiagram
   actor U as User
   #participant altV as movieDescription.ejs
   participant V as searchResults.ejs
-  participant cJS as client-side.js
+  participant cJS as reviewModal.js # [path to file](/public/js/reviewModal.js)
   #participant SS as index.mjs
   #participant DB as database
   #participant API as omdb's API
@@ -233,22 +233,31 @@ sequenceDiagram
   actor U as User
   #participant altV as movieDescription.ejs
   participant V as searchResults.ejs
-  participant cJS as client-side.js
+  participant cJS as reviewModal.js
   participant SS as index.mjs
   participant DB as database
   participant API as omdb's API
   autonumber
   U ->> V: User inputs:<br>title & rating & review<br>clicks submit on modal
-  V->>cJS: 
+  V->>cJS: validation check
+  alt invalidation of inputs
+    cJS->>V: update and show invalidation
+  end
   cJS ->> SS: POST Request<br>data: title, rating, review, movie_id
-  SS ->>+ DB: query if movie_id<br> exists in movie table
+  SS ->>+ DB: QUERY<br> if movie_id<br> exists in movie table
   DB ->> SS: response
   alt doesn't exist in DB
     SS->>API: GET request for movie details
     API->>SS: GET response for movie detals
     SS->>DB: insert movie into movie table
   end
-  SS->>DB: insert review into DB
+  SS ->>+ DB: QUERY<br>movie_id in user's watchlist table
+  DB ->>- SS: response
+  alt doesn't exist in DB
+    SS ->> DB: INSERT<br>movie_id, user_id into watchlist table
+    
+  end
+  SS->>DB: INSERT<br> review into review table
   SS->>cJS: POST Response
   alt response not ok
     cJS->>V: show alert indicating review not recorded
@@ -269,8 +278,8 @@ sequenceDiagram
   end
 ```
 ---
-## [View Edit User: username update](/docs/plan/diagrams/view.md#view-edit-user)
-- as a note updating of password should be similar, simply replace any instance of username with password instead
+## [View Edit User: password update](/docs/plan/diagrams/view.md#view-edit-user)
+- as a note updating of password should be similar, simply replace any instance of password with password instead
 ```mermaid
 ---
 config:
@@ -297,17 +306,17 @@ sequenceDiagram
   participant DB as database
   #participant API as omdb's API
   autonumber
-  U ->> V: User inputs:<br>new username<br>clicks Update for username
+  U ->> V: User inputs:<br>new password<br>clicks Update for password
   V->>cJS: input validation
   alt input invalid
     cJS->>V: update view<br>indicating invalidation
   else input valid
-    cJS->>SS: POST Request<br>update username
+    cJS->>SS: POST<br>Request<br>update password
   end
-  SS->>DB: insert new value into username
+  SS->>DB: UPDATE<br>new value into password<br>of user table
   DB->>SS: query response
-  SS->>cJS: POST Response
-  cJS->>V: display toast<br>username changed
+  SS->>cJS: POST<br>Response
+  cJS->>V: DISPLAY<br> toast<br>password changed
   box grey Client-Side
     #participant altV
     participant V
