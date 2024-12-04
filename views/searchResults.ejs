@@ -25,10 +25,12 @@
         <% for (show of shows) { %>
           <div class="col">
             <div class="card h-100">
-              <a href="">
-                <div class="more-info bg-black rounded-pill px-3 py-1">More Info</div>
-                <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://image.tmdb.org/t/p/w500<%=show.backdrop_path%>" alt="image from <%=show.title%>">
-              </a>
+              <form action="/description">
+                <button class="btn p-0" name="id" value=<%=show.id%>>
+                  <div class="more-info bg-black rounded-pill px-3 py-1">More Info</div>
+                  <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://image.tmdb.org/t/p/w500<%=show.backdrop_path%>" alt="image from <%=show.title%>">
+                </button>
+              </form>
               <div class="card-body">
                 <!-- <h5 class="card-title"><%= show.title %></h5>
                 <p class="card-text"><%= show.overview %></p>

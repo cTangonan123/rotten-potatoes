@@ -49,6 +49,22 @@ app.get('/search/results', async (req, res) => {
   res.render('searchResults', { "shows": data.results });
 });
 
+app.get('/description', async (req, res) => {
+  let id = req.query.id;
+  const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`
+    }
+  };
+
+  let response = await fetch(url, options);
+  let data = await response.json();
+  res.render('movieDescription', { "show": data });
+});
+
 /* POST Requests */
 
 // Handle adding watchlist form submission
