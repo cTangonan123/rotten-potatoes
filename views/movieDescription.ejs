@@ -60,8 +60,35 @@
 
         <hr>
 
-        <div class="container text-center">
-            <h3>Reviews</h3>
+        <div class="container">
+            <h3 class="text-center">Reviews</h3>
+            <%for (review of reviews) {%>
+            <div class="card mb-3 w-100" >
+                <div class="row g-0">
+                    <div class="col col-4 col-sm-3 col-md-2 me-0">
+                        <img
+                            src="https://eu.ui-avatars.com/api/?name=<%=review.user_name%>e&size=250"
+                            class="img-fluid rounded-start"
+                            alt="anon image of <%=review.user_name%>"
+                        />
+                    </div>
+                    <div class="col col-8 col-sm-9 col-md-10 ms-0 justify-self-start">
+                        <div class="card-body">
+                            <h5 class="card-title"><%=review.title%></h5>
+                            <p class="card-text">
+                                <%=review.review%>
+                            </p>
+                            <p class="card-text">
+                                <small class="text-muted"
+                                    >Rating: <%=review.rating%> Stars</small
+                                >
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% } %>
+            
         </div>
 
         <!-- Modal -->

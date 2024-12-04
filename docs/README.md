@@ -28,7 +28,7 @@
   - Database Schema(for final submission)
   - Screenshots of the finished project(for final submission)
   - Must use 3 Database tables
-    - Refer to diagram on page 1
+    - Refer to [ER Diagram](/docs/plan/diagrams/er.md)
 ### Feature Requirements:
 - Minimum of 3 Different types of form elements
   - Input text for searching a movie

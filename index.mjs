@@ -50,8 +50,8 @@ app.get('/search/results', async (req, res) => {
 });
 
 app.get('/description', async (req, res) => {
-  let id = req.query.id;
-  const url = `https://api.themoviedb.org/3/movie/${id}?language=en-US`;
+  let movie_id = req.query.id;
+  const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
     method: 'GET',
     headers: {
@@ -62,7 +62,17 @@ app.get('/description', async (req, res) => {
 
   let response = await fetch(url, options);
   let data = await response.json();
-  res.render('movieDescription', { "show": data });
+  console.log(data);
+
+  let sql = `
+    SELECT user_id, movie_id, title, rating, review, user_name 
+    FROM reviews r
+    LEFT JOIN user u ON r.user_id = u.id
+    WHERE movie_id = ?`;
+  const [rows] = await conn.query(sql, [movie_id]);
+  console.log(rows);
+
+  res.render('movieDescription', { "show": data, "reviews": rows });
 });
 
 /* POST Requests */
@@ -97,17 +107,18 @@ app.post('/watchlist', async (req, res) => {
 
   // where we add the movie to the database if it isn't already in there
   if (rows.length === 0) {
-    sql = `INSERT INTO movie (
+    sql = `
+      INSERT INTO movie (
       id, title, release_date, overview, backdrop_path, poster_path, vote_average
-    ) VALUES (
+      ) VALUES (
       ?, ?, ?, ?, ?, ?, ?
-    )`;
+      )`;
     await conn.query(sql, [result.id, result.title, result.release_date, result.overview, result.backdrop_path, result.poster_path, result.vote_average]);
   }
 
   // add the movie to the watchlist
   let sql2 = `INSERT INTO watchlist (movie_id, user_id) VALUES (?, ?)`;
-  await conn.query(sql2, [movie_id, 1]);
+  await conn.query(sql2, [movie_id, 1]); // hard-coded user_id for now, TODO: change to session user_id
 
   res.json({ message: 'Movie added to your watchlist' });
 });
@@ -139,7 +150,8 @@ app.post('/submitReview', async (req, res) => {
       }) // where to do stuff
       .catch(err => console.error(err));
     
-    sqlMovie = `INSERT INTO movie (
+    sqlMovie = `
+      INSERT INTO movie (
       id, title, release_date, overview, backdrop_path, poster_path, vote_average
     ) VALUES (
       ?, ?, ?, ?, ?, ?, ?
@@ -153,23 +165,45 @@ app.post('/submitReview', async (req, res) => {
   // if they have, update the review instead of inserting a new one */
 
   // check if user has already submitted a review for this movie, if they have, update the review, if not, insert a new one
-  let sqlReviewCheck = `SELECT count(*) as count FROM reviews WHERE movie_id = ? AND user_id = ?`;
+  let sqlReviewCheck = `
+    SELECT count(*) as count 
+    FROM reviews 
+    WHERE movie_id = ? AND user_id = ?`;
+
   const [count] = await conn.query(sqlReviewCheck, [movie_id, user_id]);
   if (count[0].count > 0) {
-    let sqlReviewUpdate = `UPDATE reviews SET title = ?, rating = ?, review = ? WHERE movie_id = ? AND user_id = ?`;
+    let sqlReviewUpdate = `
+      UPDATE reviews 
+      SET title = ?, rating = ?, review = ? 
+      WHERE movie_id = ? AND user_id = ?`;
+
     await conn.query(sqlReviewUpdate, [title, rating, review, movie_id, user_id])
   } else {
-    let sqlReview = `INSERT INTO reviews (movie_id, user_id, title, rating, review) VALUES (?, ?, ?, ?, ?)`;
+    let sqlReview = `
+      INSERT INTO reviews (
+      movie_id, user_id, title, rating, review
+      ) VALUES (
+      ?, ?, ?, ?, ?)`;
+
     await conn.query(sqlReview, [movie_id, user_id, title, rating, review])
       .then(() => console.log('Review submitted!'))
       .catch(err => console.error(err));
   }
     
   // inserting movie to the watchlist when review is submitted.
-  let sqlWatchListCheck = `SELECT count(*) as count FROM watchlist WHERE movie_id = ? AND user_id = ?`;
+  let sqlWatchListCheck = `
+    SELECT count(*) as count 
+    FROM watchlist 
+    WHERE movie_id = ? AND user_id = ?`;
+  
   const [count2] = await conn.query(sqlWatchListCheck, [movie_id, user_id]);
   if (count2[0].count === 0) {
-    let sqlWatchList = `INSERT INTO watchlist (movie_id, user_id) VALUES (?, ?)`;
+    let sqlWatchList = `
+      INSERT INTO watchlist (
+      movie_id, user_id
+      ) VALUES (
+      ?, ?)`;
+
     await conn.query(sqlWatchList, [movie_id, user_id])
       .then(() => console.log('Movie added to watchlist!'))
       .catch(err => console.error(err));
