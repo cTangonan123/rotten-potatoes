@@ -60,28 +60,36 @@
 
         <hr>
 
-        <div class="container">
+        <div class="container-fluid">
             <h3 class="text-center">Reviews</h3>
             <%for (review of reviews) {%>
             <div class="card mb-3 w-100" >
                 <div class="row g-0">
-                    <div class="col col-4 col-sm-3 col-md-2 me-0">
+                    <div class="col col-4 col-sm-3 col-md-2 col-xxl-1 me-0">
                         <img
                             src="https://eu.ui-avatars.com/api/?name=<%=review.user_name%>e&size=250"
-                            class="img-fluid rounded-start"
+                            class="img-fluid rounded-start h-100"
                             alt="anon image of <%=review.user_name%>"
                         />
                     </div>
-                    <div class="col col-8 col-sm-9 col-md-10 ms-0 justify-self-start">
+                    <div class="col col-8 col-sm-9 col-md-10 col-xxl-11 ms-0 justify-self-start">
                         <div class="card-body">
                             <h5 class="card-title"><%=review.title%></h5>
                             <p class="card-text">
                                 <%=review.review%>
                             </p>
                             <p class="card-text">
-                                <small class="text-muted"
-                                    >Rating: <%=review.rating%> Stars</small
-                                >
+                                <small class="text-muted">Rating: </small>
+                                <small class="text-muted">
+                                    <% for (let i = 0; i < review.rating; i++) { %>
+                                        <i class="bi bi-star-fill"></i>
+                                    <%}%>
+                                    <% for (let i = 0; i < 10 - review.rating; i++) { %>
+                                        <i class="bi bi-star"></i>
+                                    <%}%>
+                                </small>
+                                <br>
+                                <small class="text-muted">By: <%=review.user_name%></small>
                             </p>
                         </div>
                     </div>

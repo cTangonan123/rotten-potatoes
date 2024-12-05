@@ -41,3 +41,12 @@ button:hover .more-info {
   color: white;
   background-color: #af3e42;
 }
+
+.resultMovieOverview::-webkit-scrollbar {
+  display: none;
+}
+
+.resultMovieOverview {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
