@@ -12,7 +12,7 @@ document.querySelectorAll('#writeReview').forEach(item => {
 
     // update the hidden input form values with the movie_id and user_id
     document.querySelector("#rMovieId").value = movie_id
-    document.querySelector("#rUserId").value = 1 // hardcoded for now, TODO: change to session user id
+    // document.querySelector("#rUserId").value = 1 // hardcoded for now, TODO: change to session user id
   }); 
 });
 

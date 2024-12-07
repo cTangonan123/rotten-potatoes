@@ -12,8 +12,8 @@ app.use(express.static('public'));                // Serve static files from the
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 app.use(express.json());                          // Parse JSON bodies
 
-
-const pool = mysql.createPool({                   // Create a pool to connect to the database
+// Setup MySQL connection
+const pool = mysql.createPool({                   
   host: process.env.DB_HOST,
   user: process.env.DB_USER,
   password: process.env.DB_PASSWORD,
@@ -22,18 +22,23 @@ const pool = mysql.createPool({                   // Create a pool to connect to
   waitForConnections: true
 });
 
-const conn = await pool.getConnection();          // Get a connection from the pool
+const conn = await pool.getConnection();
 
+/* GET Requests */
+
+// skeleton code for initial page, replace with login handling
 app.get('/', async (req, res) => {
-  let sql = 'SELECT * FROM user';                // SQL query to select all the users
-  const [rows] = await conn.execute(sql);         // Execute the query
+  let sql = 'SELECT * FROM user';                
+  const [rows] = await conn.execute(sql);         
   for (let row of rows) {
-    console.log(row);                             // Print the rows
+    console.log(row);                             
   }
   res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
 });
 
+// handles the results of a search query
 app.get('/search/results', async (req, res) => {
+  let user_id = 1; // hard-coded for now, TODO: change to session user_id
   const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
   const options = {
     method: 'GET',
@@ -46,10 +51,12 @@ app.get('/search/results', async (req, res) => {
   let response = await fetch(url, options);
   let data = await response.json();
     
-  res.render('searchResults', { "shows": data.results });
+  res.render('searchResults', { "shows": data.results, "user_id": user_id });
 });
 
+// handle form submission of specific movie submission
 app.get('/description', async (req, res) => {
+  let user_id = 1; // hard-coded for now, TODO: change to session user_id
   let movie_id = req.query.id;
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
@@ -72,13 +79,29 @@ app.get('/description', async (req, res) => {
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
 
-  res.render('movieDescription', { "show": data, "reviews": rows });
+  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id });
+});
+
+// handle user profile page
+app.get('/userProfile', async (req, res) => {
+  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  
+  let sql = `
+    SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
+    FROM reviews r
+    LEFT JOIN movie m ON r.movie_id = m.id
+    WHERE user_id = ?`;
+  const [rows] = await conn.query(sql, [user_id]);
+  console.log(rows);
+
+  res.render('userProfile', { "reviews": rows });
 });
 
 /* POST Requests */
 
 // Handle adding watchlist form submission
 app.post('/watchlist', async (req, res) => {
+  let user_id = 1; // hard-coded for now, TODO: change to session user_id
   console.log(req.body.movie_id);
   const movie_id = req.body.movie_id;
   // check if movie is already in database
@@ -86,7 +109,9 @@ app.post('/watchlist', async (req, res) => {
   let sql = `SELECT * FROM movie WHERE id = ?`;
   const [rows] = await conn.query(sql, [movie_id]);
   
-
+  
+  // where we add the movie to the database if it isn't already in there
+  if (rows.length === 0) {
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
     method: 'GET',
@@ -102,11 +127,9 @@ app.post('/watchlist', async (req, res) => {
       console.log(data);
       return data;
       
-    }) // where to do stuff
+    }) 
     .catch(err => console.error(err));
 
-  // where we add the movie to the database if it isn't already in there
-  if (rows.length === 0) {
     sql = `
       INSERT INTO movie (
       id, title, release_date, overview, backdrop_path, poster_path, vote_average
@@ -117,20 +140,25 @@ app.post('/watchlist', async (req, res) => {
   }
 
   // add the movie to the watchlist
+  
   let sql2 = `INSERT INTO watchlist (movie_id, user_id) VALUES (?, ?)`;
-  await conn.query(sql2, [movie_id, 1]); // hard-coded user_id for now, TODO: change to session user_id
+  await conn.query(sql2, [movie_id, user_id]); 
 
   res.json({ message: 'Movie added to your watchlist' });
 });
 
+// Handle review form submission
 app.post('/submitReview', async (req, res) => {
-  console.log(req.body);
+  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  
   // getting the values from the form
-  const { movie_id, user_id, title, rating, review } = req.body;
+  const { movie_id, title, rating, review } = req.body;
 
-  // check if movie exists in database movie table, if it doesn't, pull from TMDB API and insert into database
+  // check if movie exists in database movie table,
   let sqlMovie = `SELECT * FROM movie WHERE id = ?`;
   const [rows] = await conn.query(sqlMovie, [movie_id]);
+
+  // if movie is not in database, pull from TMDB API and insert into database
   if (rows.length === 0) {
     const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
     const options = {
@@ -159,25 +187,23 @@ app.post('/submitReview', async (req, res) => {
     await conn.query(sqlMovie, [result.id, result.title, result.release_date, result.overview, result.backdrop_path, result.poster_path, result.vote_average]);
   }
   
-  // inserting the values into the database
-  /* check first if movie is in database 
-  // then check if the user has already submitted a review for this movie
-  // if they have, update the review instead of inserting a new one */
-
-  // check if user has already submitted a review for this movie, if they have, update the review, if not, insert a new one
+  // check database if user has already submitted a review for this movie
   let sqlReviewCheck = `
     SELECT count(*) as count 
     FROM reviews 
     WHERE movie_id = ? AND user_id = ?`;
 
-  const [count] = await conn.query(sqlReviewCheck, [movie_id, user_id]);
-  if (count[0].count > 0) {
+  const [countReview] = await conn.query(sqlReviewCheck, [movie_id, user_id]);
+
+  // if user has already submitted a review, update the review
+  if (countReview[0].count > 0) {
     let sqlReviewUpdate = `
       UPDATE reviews 
       SET title = ?, rating = ?, review = ? 
       WHERE movie_id = ? AND user_id = ?`;
 
     await conn.query(sqlReviewUpdate, [title, rating, review, movie_id, user_id])
+  // if user has not submitted a review, insert a new review
   } else {
     let sqlReview = `
       INSERT INTO reviews (
@@ -187,7 +213,7 @@ app.post('/submitReview', async (req, res) => {
 
     await conn.query(sqlReview, [movie_id, user_id, title, rating, review])
       .then(() => console.log('Review submitted!'))
-      .catch(err => console.error(err));
+      
   }
     
   // inserting movie to the watchlist when review is submitted.
@@ -196,8 +222,9 @@ app.post('/submitReview', async (req, res) => {
     FROM watchlist 
     WHERE movie_id = ? AND user_id = ?`;
   
-  const [count2] = await conn.query(sqlWatchListCheck, [movie_id, user_id]);
-  if (count2[0].count === 0) {
+  const [countWatchList] = await conn.query(sqlWatchListCheck, [movie_id, user_id]);
+  // if movie is not in watchlist, add it
+  if (countWatchList[0].count === 0) {
     let sqlWatchList = `
       INSERT INTO watchlist (
       movie_id, user_id
@@ -206,7 +233,7 @@ app.post('/submitReview', async (req, res) => {
 
     await conn.query(sqlWatchList, [movie_id, user_id])
       .then(() => console.log('Movie added to watchlist!'))
-      .catch(err => console.error(err));
+      
   }
   
   res.json({ message: 'Database has been updated' });
