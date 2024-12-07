@@ -94,8 +94,20 @@ app.get('/userProfile', async (req, res) => {
   const [rows] = await conn.query(sql, [user_id]);
   console.log(rows);
 
-  res.render('userProfile', { "reviews": rows });
+  res.render('userProfile', { "reviews": rows, "user_id": user_id });
 });
+
+app.get('/getReview/:id', async (req, res) => {
+  let review_id = req.params.id;
+  let sql = `
+    SELECT * 
+    FROM reviews 
+    WHERE id = ?`;
+  const [rows] = await conn.query(sql, [review_id]);
+  console.log(rows[0]);
+  res.json(rows[0]);
+});
+
 
 /* POST Requests */
 
@@ -237,6 +249,18 @@ app.post('/submitReview', async (req, res) => {
   }
   
   res.json({ message: 'Database has been updated' });
+});
+
+app.post('/deleteReview', async (req, res) => {
+  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  const review_id = req.body.review_id;
+
+  let sql = `
+    DELETE FROM reviews 
+    WHERE id = ?`;
+  await conn.query(sql, [review_id]);
+
+  res.json({ message: 'Review deleted' });
 });
 
 

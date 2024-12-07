@@ -92,12 +92,24 @@
                     </small>
                   </p>
                   <div class="row align-self-end align-items-end mt-auto mb-0 justify-content-end w-100 me-1">
-                    <button class="btn btn-outline-secondary col col-5 col-md-3 me-1" id="btnReviewUpdate" data-review-id="<%= review.review_id %>" type="button">
+                    <button 
+                      class="btn btn-outline-secondary col col-5 col-md-3 me-1" 
+                      id="btnReviewUpdate" 
+                      data-review-id="<%= review.review_id %>"
+                      type="button">
                       Update
                     </button>
-                    <button class="btn btn-outline-danger col col-5 col-md-3 me-1" id="btnReviewDelete" data-review-id="<%= review.review_id %>" type="button">
+                    
+                    <button 
+                      class="btn btn-outline-danger col col-5 col-md-3 me-1" 
+                      id="btnReviewDelete"
+                      name="review_id"
+                      value="<%= review.review_id %>"
+                      data-review-id="<%= review.review_id %>" 
+                      type="button">
                       Delete
                     </button>
+                    
                   </div>
                 </div>
                 
@@ -107,7 +119,10 @@
         </div>
         <%}%>
       </div>
-
+    </div>
+  </div>
+  <%- include("partials/reviewModal.ejs") %>
+  <script src="js/updateReviewModal.js"></script>
 
 
 

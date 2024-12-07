@@ -64,5 +64,6 @@ document.querySelector("#reviewModal").addEventListener('submit', async(e) => {
   
   // close
   reviewModal.hide()
+  location.reload()
 
 });
