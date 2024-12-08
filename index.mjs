@@ -26,6 +26,7 @@ const conn = await pool.getConnection();
 
 /* GET Requests */
 
+/* VIEW Specific GET Requests */
 
 // skeleton code for initial page, replace with login handling
 app.get('/', async (req, res) => {
@@ -38,8 +39,17 @@ app.get('/', async (req, res) => {
 });
 
 // handles the results of a search query
-app.get('/search/results', async (req, res) => {
-  let user_id = 2; // hard-coded for now, TODO: change to session user_id
+app.get('/search/results', getUserId, getWatchListForUser, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let watchlist = req.body.watchlist;
+
+  // console.log("this is the user id: " + user_id) // for testing
+  // console.log("this is the watchlist:*********")
+  // for (let movie of watchlist) {
+  //   console.log(movie)
+  // }
+
+  // let user_id = 2; // hard-coded for now, TODO: change to session user_id
   const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
   const options = {
     method: 'GET',
@@ -52,12 +62,13 @@ app.get('/search/results', async (req, res) => {
   let response = await fetch(url, options);
   let data = await response.json();
     
-  res.render('searchResults', { "shows": data.results, "user_id": user_id });
+  res.render('searchResults', { "shows": data.results, "user_id": user_id, "watchlist": watchlist });
 });
 
 // handle form submission of specific movie submission
-app.get('/description', async (req, res) => {
-  let user_id = 2; // hard-coded for now, TODO: change to session user_id
+app.get('/description', getUserId, getWatchListForUser, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let watchlist = req.body.watchlist;
   let movie_id = req.query.id;
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
@@ -80,13 +91,14 @@ app.get('/description', async (req, res) => {
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
 
-  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id });
+  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id, "watchlist": watchlist });
 });
 
 // handle user profile page
-app.get('/userProfile', async (req, res) => {
-  let user_id = 2; // hard-coded for now, TODO: change to session user_id
-  
+app.get('/userProfile', getUserId, getWatchListForUser, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let watchlist = req.body.watchlist;
+
   let sql = `
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
     FROM reviews r
@@ -95,9 +107,10 @@ app.get('/userProfile', async (req, res) => {
   const [rows] = await conn.query(sql, [user_id]);
   console.log(rows);
 
-  res.render('userProfile', { "reviews": rows, "user_id": user_id });
+  res.render('userProfile', { "reviews": rows, "user_id": user_id, "watchlist": watchlist });
 });
 
+/* API Specific(associated with client-side js) GET Requests */
 
 app.get('/getReview/:id', async (req, res) => {
   let review_id = req.params.id;
@@ -114,9 +127,9 @@ app.get('/getReview/:id', async (req, res) => {
 /* POST Requests */
 
 // Handle adding watchlist form submission
-app.post('/addToWatchList', async (req, res) => {
-  let user_id = 2; // hard-coded for now, TODO: change to session user_id
-  console.log(req.body.movie_id);
+app.post('/addToWatchList', getUserId, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  // console.log(req.body.movie_id);
   const movie_id = req.body.movie_id;
   // check if movie is already in database
   // if not, add it
@@ -162,8 +175,8 @@ app.post('/addToWatchList', async (req, res) => {
 });
 
 // Handle review form submission
-app.post('/submitReview', async (req, res) => {
-  let user_id = 2; // hard-coded for now, TODO: change to session user_id
+app.post('/submitReview', getUserId, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
   
   // getting the values from the form
   const { movie_id, title, rating, review } = req.body;
@@ -253,8 +266,8 @@ app.post('/submitReview', async (req, res) => {
   res.json({ message: 'Database has been updated' });
 });
 
-app.post('/deleteReview', async (req, res) => {
-  let user_id = 2; // hard-coded for now, TODO: change to session user_id
+app.post('/deleteReview', getUserId, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
   const review_id = req.body.review_id;
 
   let sql = `
@@ -264,6 +277,35 @@ app.post('/deleteReview', async (req, res) => {
 
   res.json({ message: 'Review deleted' });
 });
+
+/** MIDDLEWARE Functions **/
+// middleware to get userId from session
+async function getUserId(req, res, next) {
+  // get user_id from session
+  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  req.body.user_id = user_id;
+  next();
+}
+
+
+async function getWatchListForUser(req, res, next) {
+  // get user_id from session
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  
+  // get watchlist for user
+  let sql = `
+    SELECT m.id as movie_id, m.title as movie_title, m.poster_path
+    FROM watchlist w
+    LEFT JOIN movie m
+    ON w.movie_id = m.id
+    WHERE w.user_id = ?;
+  `
+  const [rows] = await conn.query(sql, [user_id]);
+  req.body.watchlist = rows;
+
+  next();
+  
+}
 
 
 

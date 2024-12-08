@@ -1,0 +1,24 @@
+<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
+  <div class="offcanvas-header">
+    <h5 class="offcanvas-title" id="offcanvasScrollingLabel">User's Watchlist</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+  </div>
+  <div class="offcanvas-body">
+    <div class="container-fluid">
+      <% for (movie of watchlist) { %>
+      <form action="/description">
+      <button class="btn p-0 w-100 mb-2 btn-outline-secondary" name="id" href="/description" value=<%=movie.movie_id%>>
+      <div class="row justify-content-between align-items-center ps-2">
+        <div class="col col-9 justify-self-stretch align-middle h-100">
+          <h5 class="text-truncate text-start"><%=movie.movie_title%></h5>
+        </div>
+        <div class="col col-3 object-fit-cover me-0">
+          <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="poster of <%=movie.movie_title%>" style="max-height:5rem">
+        </div>
+      </div>
+      </button>
+      </form>
+      <% } %>
+    </div>
+  </div>
+</div>
