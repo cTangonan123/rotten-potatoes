@@ -26,6 +26,7 @@ const conn = await pool.getConnection();
 
 /* GET Requests */
 
+
 // skeleton code for initial page, replace with login handling
 app.get('/', async (req, res) => {
   let sql = 'SELECT * FROM user';                
@@ -38,7 +39,7 @@ app.get('/', async (req, res) => {
 
 // handles the results of a search query
 app.get('/search/results', async (req, res) => {
-  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  let user_id = 2; // hard-coded for now, TODO: change to session user_id
   const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
   const options = {
     method: 'GET',
@@ -56,7 +57,7 @@ app.get('/search/results', async (req, res) => {
 
 // handle form submission of specific movie submission
 app.get('/description', async (req, res) => {
-  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  let user_id = 2; // hard-coded for now, TODO: change to session user_id
   let movie_id = req.query.id;
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
@@ -72,7 +73,7 @@ app.get('/description', async (req, res) => {
   console.log(data);
 
   let sql = `
-    SELECT user_id, movie_id, title, rating, review, user_name 
+    SELECT r.user_id, r.movie_id, r.title, r.rating, r.review, u.user_name 
     FROM reviews r
     LEFT JOIN user u ON r.user_id = u.id
     WHERE movie_id = ?`;
@@ -84,7 +85,7 @@ app.get('/description', async (req, res) => {
 
 // handle user profile page
 app.get('/userProfile', async (req, res) => {
-  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  let user_id = 2; // hard-coded for now, TODO: change to session user_id
   
   let sql = `
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
@@ -96,6 +97,7 @@ app.get('/userProfile', async (req, res) => {
 
   res.render('userProfile', { "reviews": rows, "user_id": user_id });
 });
+
 
 app.get('/getReview/:id', async (req, res) => {
   let review_id = req.params.id;
@@ -112,8 +114,8 @@ app.get('/getReview/:id', async (req, res) => {
 /* POST Requests */
 
 // Handle adding watchlist form submission
-app.post('/watchlist', async (req, res) => {
-  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+app.post('/addToWatchList', async (req, res) => {
+  let user_id = 2; // hard-coded for now, TODO: change to session user_id
   console.log(req.body.movie_id);
   const movie_id = req.body.movie_id;
   // check if movie is already in database
@@ -161,7 +163,7 @@ app.post('/watchlist', async (req, res) => {
 
 // Handle review form submission
 app.post('/submitReview', async (req, res) => {
-  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  let user_id = 2; // hard-coded for now, TODO: change to session user_id
   
   // getting the values from the form
   const { movie_id, title, rating, review } = req.body;
@@ -252,7 +254,7 @@ app.post('/submitReview', async (req, res) => {
 });
 
 app.post('/deleteReview', async (req, res) => {
-  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  let user_id = 2; // hard-coded for now, TODO: change to session user_id
   const review_id = req.body.review_id;
 
   let sql = `

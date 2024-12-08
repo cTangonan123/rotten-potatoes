@@ -1,13 +1,29 @@
 # TODO List:
-
 ## Priority List
-- [ ] implement `sessions` and `bcrypt` into project for login
 - [ ] Initial Search page view
-- [ ] Watchlist Modal
+- [ ] implement `sessions` and `bcrypt` into project for Logging In
+- [ ] admin section to EditUsers and addMovie
+- [ ] Watchlist Sidebar
+- [ ] 
 
 ---
-Due by ??
-- [ ] 
+Due by Wednesday 12/11/2024
+- Login implementation
+- Create New User page
+  - view
+  - routing
+- Admin Section
+  - Edit Users page (for Admin only)
+    - view
+    - routing
+  - Add Movie page (for Admin only)
+    - view
+    - routing
+- Watchlist sidebar
+
+Due by Sunday 12/8/2024
+- [ ] Initial Search Page View 
+
 Break: Getting Ready for Final Exam
 - [ ] next meeting will be Saturday 12/7/2024 @ ???
 Due by Wednesday 12/4/2024 

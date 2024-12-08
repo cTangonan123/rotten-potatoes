@@ -5,8 +5,9 @@ document.querySelectorAll('#addToWatchList').forEach(item => {
     //handle click
     let movie_id = e.currentTarget.dataset.movieId
     console.log(movie_id)
-
-    fetch('/watchlist', {
+    
+    // POST request to add movie to watchlist
+    fetch('/addToWatchList', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

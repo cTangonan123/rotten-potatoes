@@ -5,6 +5,7 @@
 - [State Diagrams](/docs/plan/diagrams/state.md)
 - [UI Diagrams](/docs/plan/diagrams/ui.md)
 - [API Notes](/docs/plan/API%20Notes.md)
+- [SQL Notes](/docs/plan/SQL%20Notes.md)
 
 ## Overall Plan
 - Title of the Project: **Rotten Potatoes**

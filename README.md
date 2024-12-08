@@ -5,6 +5,8 @@
 - **Documents** 
   - [Documents](/docs/README.md)
   - [TODO List](/docs/plan/TODO.md)
+  - [API Notes](/docs/plan/API%20Notes.md)
+  - [SQL Notes](/docs/plan/SQL%20Notes.md)
 - **Diagrams**
   - [ER Diagrams](/docs/plan/diagrams/er.md)
   - [View Diagrams](/docs/plan/diagrams/view.md)
@@ -52,6 +54,8 @@ $ npm run server
 npm run build-css
 npm run watch-css
 ```
+
+6) refer to [SQL Notes](/docs/plan/SQL%20Notes.md) in order to setup your own working database via https://cloud.fastcomet.com, ensure that your `.env` environment variables match according to the assigned values of your newly created db.
 ---
 ## Git Instructions
 our `feature` branch will act as our ordered sandbox, where we push and pull from regularly. consider `dev_branch` the branch you intend to work in.

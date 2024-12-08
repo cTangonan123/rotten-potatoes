@@ -31,7 +31,7 @@ document.querySelector("#reviewModal").addEventListener('submit', async(e) => {
     return
   }
 
-  // send fetch request
+  // POST request to insert review into Reviews table
   // TODO: add toasts for success
   await fetch('/submitReview', {
     method: 'POST',

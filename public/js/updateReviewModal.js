@@ -23,6 +23,8 @@ document.querySelectorAll('#btnReviewDelete').forEach(item => {
   item.addEventListener('click', async function(e) {
     e.preventDefault();
     let review_id = e.currentTarget.dataset.reviewId
+
+    // POST request to delete review
     await fetch(`/deleteReview`, {
       method: 'POST',
       headers: {
