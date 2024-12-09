@@ -40,18 +40,21 @@ app.get('/', async (req, res) => {
 
 app.get('/search', getUserId, getWatchListForUser, async (req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
-  let watchlist = req.body.watchlist;
+  let watchlist = req.body.user_watchlist;
 
   res.render('searchPage', { "user_id": user_id, "watchlist": watchlist });
 });
 
 // handles the results of a search query
-app.get('/search/results', getUserId, getWatchListForUser, async (req, res) => {
+app.get('/search/results', getUserId, getWatchListForUser, getReviewsForUser, async (req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
-  let watchlist = req.body.watchlist;
+  let watchlist = req.body.user_watchlist;
+  let reviews = req.body.user_reviews;
   let searchQuery = req.query.searchQuery;
   let searchQueryURL = searchQuery.replace(/ /g, '%20');
+
   let setWatched = new Set(watchlist.map(movie => movie.movie_id));
+  let setReviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
 
   // https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=1
 
@@ -75,15 +78,19 @@ app.get('/search/results', getUserId, getWatchListForUser, async (req, res) => {
   let response = await fetch(url, options);
   let data = await response.json();
     
-  res.render('searchResults', { "shows": data.results, "user_id": user_id, "watchlist": watchlist, "watched": setWatched });
+  res.render('searchResults', { "shows": data.results, "user_id": user_id, "watchlist": watchlist, "watched": setWatched, "reviewed": setReviewed });
 });
 
 // handle form submission of specific movie submission
-app.get('/description', getUserId, getWatchListForUser, async (req, res) => {
+app.get('/description', getUserId, getWatchListForUser, getReviewsForUser, async (req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
-  let watchlist = req.body.watchlist;
+  let watchlist = req.body.user_watchlist;
+  let reviews = req.body.user_reviews;
   let movie_id = req.query.id;
+
   let setWatched = new Set(watchlist.map(movie => movie.movie_id));
+  let setReviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
+  
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
     method: 'GET',
@@ -105,13 +112,13 @@ app.get('/description', getUserId, getWatchListForUser, async (req, res) => {
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
 
-  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id, "watchlist": watchlist, "watched": setWatched });
+  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id, "watchlist": watchlist, "watched": setWatched, "reviewed": setReviewed });
 });
 
 // handle user profile page
 app.get('/userProfile', getUserId, getWatchListForUser, async (req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
-  let watchlist = req.body.watchlist;
+  let watchlist = req.body.user_watchlist;
 
   let sql = `
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
@@ -327,10 +334,26 @@ async function getWatchListForUser(req, res, next) {
     WHERE w.user_id = ?;
   `
   const [rows] = await conn.query(sql, [user_id]);
-  req.body.watchlist = rows;
+  req.body.user_watchlist = rows;
 
   next();
   
+}
+
+async function getReviewsForUser(req, res, next) {
+  // get user_id from session
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  
+  // get watchlist for user
+  let sql = `
+    SELECT *
+    FROM reviews r
+    WHERE r.user_id = ?;
+  `
+  const [rows] = await conn.query(sql, [user_id]);
+  req.body.user_reviews = rows;
+
+  next();
 }
 
 

@@ -41,12 +41,19 @@
 
                         </div>
                         <div class="col col-md-6 my-2">
-                            <a name="" id="writeReview" class="btn btn-primary w-100 write-review-btn" href="#"
-                                role="button" data-movie-id=<%=show.id%>
-                                >
-                                <i class="bi bi-file-earmark-text"></i>
-                                Review
-                            </a>
+                            <% if (reviewed.has(show.id)) {%>
+                                <a name="" id="btnReviewUpdate" class="btn btn-primary w-100 write-review-btn" href="#"
+                                role="button" data-movie-id="<%=show.id%>" data-review-id="<%=reviewed.get(show.id)%>">
+                                    <i class="bi bi-check"></i>
+                                    Reviewed
+                                </a>
+                            <%} else {%>   
+                                <a name="" id="writeReview" class="btn btn-primary w-100 write-review-btn" href="#"
+                                    role="button" data-movie-id="<%=show.id%>">
+                                    <i class="bi bi-file-earmark-text"></i>
+                                    Review
+                                </a>
+                            <%}%>
                         </div>
                     </div>
                 </div>
@@ -98,6 +105,7 @@
         <%- include("partials/reviewModal.ejs") %>
         <script src="/js/addToWatchList.js"></script>
         <script src="/js/removeFromWatchList.js"></script>
+        <script src="/js/updateReviewModal.js"></script>
 
 
         <!-- Sidebar -->
