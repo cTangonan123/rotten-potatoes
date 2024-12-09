@@ -50,17 +50,17 @@ app.get('/', async (req, res) => {
   res.render('login', { message: undefined, user_id: req.session.user_id });
 });
 
-app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async(req, res) => {
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async (req, res) => {
+  let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
   let popularMovies = req.body.popularMovies;
 
-  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
+  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist, "popularMovies": popularMovies });
 });
 
 // handles the results of a search query
 app.get('/search/results', getUserId, getWatchListForUser, getReviewsForUser, async (req, res) => {
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
   let reviews = req.body.user_reviews;
   let searchQuery = req.query.searchQuery;
@@ -68,6 +68,7 @@ app.get('/search/results', getUserId, getWatchListForUser, getReviewsForUser, as
 
   let setWatched = new Set(watchlist.map(movie => movie.movie_id));
   let setReviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
+
 
   // https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=1
 
@@ -77,7 +78,7 @@ app.get('/search/results', getUserId, getWatchListForUser, getReviewsForUser, as
   //   console.log(movie)
   // }
 
-  // let user_id = 2; // hard-coded for now, TODO: change to session user_id
+  // let user_id = 2;
   // const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
   const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=1`;
   const options = {
@@ -96,14 +97,14 @@ app.get('/search/results', getUserId, getWatchListForUser, getReviewsForUser, as
 
 // handle form submission of specific movie submission
 app.get('/description', getUserId, getWatchListForUser, getReviewsForUser, async (req, res) => {
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
   let reviews = req.body.user_reviews;
   let movie_id = req.query.id;
 
   let setWatched = new Set(watchlist.map(movie => movie.movie_id));
   let setReviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
-  
+
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
     method: 'GET',
@@ -118,9 +119,9 @@ app.get('/description', getUserId, getWatchListForUser, getReviewsForUser, async
   console.log(data);
 
   let sql = `
-    SELECT r.user_id, r.movie_id, r.title, r.rating, r.review, u.user_name 
+    SELECT r.user_id, r.movie_id, r.title, r.rating, r.review, u.user_name
     FROM reviews r
-    LEFT JOIN user u ON r.user_id = u.id
+           LEFT JOIN user u ON r.user_id = u.id
     WHERE movie_id = ?`;
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
@@ -130,13 +131,13 @@ app.get('/description', getUserId, getWatchListForUser, getReviewsForUser, async
 
 // handle user profile page
 app.get('/userProfile', getUserId, getWatchListForUser, async (req, res) => {
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
 
   let sql = `
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
     FROM reviews r
-    LEFT JOIN movie m ON r.movie_id = m.id
+           LEFT JOIN movie m ON r.movie_id = m.id
     WHERE user_id = ?`;
   const [rows] = await conn.query(sql, [user_id]);
   console.log(rows);
@@ -178,10 +179,23 @@ app.get('/api/usernameAvailable/:username', async (req, res) => {
   }
 });
 
-app.get('/newUser', async (req, res) => {
+app.get('/createNewAccount', (req, res) => {
   res.render('createNewAccount');
 });
 
+app.post("/newUser", async function (req, res) {
+  let username = req.body.username;
+  let password = req.body.password;
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  let sql = `INSERT INTO user (user_name, password, is_admin) VALUES (?, ?, 0)`;  // hard-coded not admin
+  let params = [username, hashedPassword];
+  const [result] = await conn.query(sql, params);
+
+  req.session.user_id = result.insertId;  // Set the session user_id
+
+  res.redirect('/search');
+});
 
 /* POST Requests */
 
@@ -203,7 +217,7 @@ app.post('/login', async (req, res) => {
 
   // if user exists, check if password matches
   const user = rows[0];
-  const match = password === user.password;
+  const match = await bcrypt.compare(password, user.password);
   if (match) {
     // if password matches, set user_id in session and redirect to search page
     req.session.user_id = user.id;
@@ -219,20 +233,18 @@ app.get('/logout', (req, res) => {
   res.redirect('/');
 });
 
-app.post("/newUser", getUserId, getWatchListForUser, getPopularMovies, async function (req, res) {
+app.post("/newUser", async function (req, res) {
   let username = req.body.username;
   let password = req.body.password;
-  let sql = `INSERT INTO user
-             (user_name, password, is_admin)
-              VALUES (?, ?, 0)`;  //hard-coded not admin
-  let params = [username, password];
-  const [rows] = await conn.query(sql, params);
+  const hashedPassword = await bcrypt.hash(password, 10);
 
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
-  let watchlist = req.body.user_watchlist;
-  let popularMovies = req.body.popularMovies;
+  let sql = `INSERT INTO user (user_name, password, is_admin) VALUES (?, ?, 0)`;  // hard-coded not admin
+  let params = [username, hashedPassword];
+  const [result] = await conn.query(sql, params);
 
-  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
+  req.session.user_id = result.insertId;  // Set the session user_id
+
+  res.redirect('/search');
 });
 
 // Handle adding watchlist form submission
@@ -402,8 +414,8 @@ app.post('/deleteReview', getUserId, async (req, res) => {
 /** MIDDLEWARE Functions **/
 // middleware to get userId from session
 async function getUserId(req, res, next) {
-  // get user_id from session
-  let user_id = req.session.user_id; // hard-coded for now, TODO: change to session user_id
+  // Get user_id from session
+  let user_id = req.session.user_id;
   req.body.user_id = user_id;
   next();
 }
