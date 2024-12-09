@@ -41,7 +41,7 @@ const conn = await pool.getConnection();
 
 // skeleton code for initial page, replace with login handling
 app.get('/', async (req, res) => {
-  // let sql = 'SELECT * FROM user';                
+  // let sql = 'SELECT * FROM user';
   // const [rows] = await conn.execute(sql);         
   // for (let row of rows) {
   //   console.log(row);                             
@@ -50,12 +50,13 @@ app.get('/', async (req, res) => {
   res.render('login', { message: undefined, user_id: req.session.user_id });
 });
 
-app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async (req, res) => {
+app.get('/search', checkAdmin, getUserId, getWatchListForUser, getPopularMovies, async (req, res) => {
   let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
   let popularMovies = req.body.popularMovies;
+  let user_name = req.session.user_name;
 
-  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist, "popularMovies": popularMovies });
+  res.render('searchPage', { user_id, watchlist, popularMovies, is_admin: req.body.is_admin, user_name });
 });
 
 // handles the results of a search query
@@ -130,9 +131,10 @@ app.get('/description', getUserId, getWatchListForUser, getReviewsForUser, async
 });
 
 // handle user profile page
-app.get('/userProfile', getUserId, getWatchListForUser, async (req, res) => {
+app.get('/userProfile', checkAdmin, getUserId, getWatchListForUser, async (req, res) => {
   let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
+  let user_name = req.session.user_name;
 
   let sql = `
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
@@ -142,7 +144,7 @@ app.get('/userProfile', getUserId, getWatchListForUser, async (req, res) => {
   const [rows] = await conn.query(sql, [user_id]);
   console.log(rows);
 
-  res.render('userProfile', { "reviews": rows, "user_id": user_id, "watchlist": watchlist });
+  res.render('userProfile', { "reviews": rows, "user_id": user_id, "watchlist": watchlist, is_admin: req.body.is_admin, user_name });
 });
 
 /* API Specific(associated with client-side js) GET Requests */
@@ -219,8 +221,9 @@ app.post('/login', async (req, res) => {
   const user = rows[0];
   const match = await bcrypt.compare(password, user.password);
   if (match) {
-    // if password matches, set user_id in session and redirect to search page
+    // if password matches, set user_id and user_name in session and redirect to search page
     req.session.user_id = user.id;
+    req.session.user_name = user.user_name;
     res.redirect('/search');
   } else {
     // if password does not match, render login page with error message
@@ -229,8 +232,35 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  req.session.destroy();
-  res.redirect('/');
+  req.session.destroy((err) => {
+    if (err) {
+      return res.redirect('/search');
+    }
+    res.clearCookie('connect.sid');
+    res.redirect('/');
+  });
+});
+
+app.get('/editUsers', checkAdmin, async (req, res) => {
+  let sql = 'SELECT * FROM user';
+  const [users] = await conn.query(sql);
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+  res.render('editUsers', { users, user_name, is_admin });
+});
+
+app.post('/updateUser', async (req, res) => {
+  const { id, user_name, is_admin } = req.body;
+  let sql = 'UPDATE user SET user_name = ?, is_admin = ? WHERE id = ?';
+  await conn.query(sql, [user_name, is_admin ? 1 : 0, id]);
+  res.redirect('/editUsers');
+});
+
+app.post('/deleteUser', async (req, res) => {
+  const { id } = req.body;
+  let sql = 'DELETE FROM user WHERE id = ?';
+  await conn.query(sql, [id]);
+  res.redirect('/editUsers');
 });
 
 app.post("/newUser", async function (req, res) {
@@ -411,6 +441,17 @@ app.post('/deleteReview', getUserId, async (req, res) => {
   res.json({ message: 'Review deleted' });
 });
 
+app.post('/updatePassword', getUserId, async (req, res) => {
+  const user_id = req.body.user_id;
+  const newPassword = req.body.password;
+  const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+  let sql = 'UPDATE user SET password = ? WHERE id = ?';
+  await conn.query(sql, [hashedPassword, user_id]);
+
+  res.redirect('/userProfile');
+});
+
 /** MIDDLEWARE Functions **/
 // middleware to get userId from session
 async function getUserId(req, res, next) {
@@ -469,6 +510,23 @@ async function getPopularMovies(req, res, next) {
   let response = await fetch(url, options)
   let data = await response.json();
   req.body.popularMovies = data.results;
+
+  next();
+}
+
+async function checkAdmin(req, res, next) {
+  if (!req.session.user_id) {
+    return res.redirect('/login');
+  }
+
+  let sql = 'SELECT is_admin FROM user WHERE id = ?';
+  const [rows] = await conn.query(sql, [req.session.user_id]);
+
+  if (rows.length > 0 && rows[0].is_admin) {
+    req.body.is_admin = true;
+  } else {
+    req.body.is_admin = false;
+  }
 
   next();
 }
