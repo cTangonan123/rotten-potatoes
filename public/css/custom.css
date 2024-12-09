@@ -71,13 +71,15 @@ button:hover .more-info {
   scrollbar-width: none;
 }
 
-.popMovieTitle {
-  transition: transform .3s ease;
+.popMovieDisplay {
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955); 
+  
 }
 
-.popMovieTitle:hover {
-  transform: translateY(-5px);
-  
+.popMovieDisplay:hover .popMovieTitle {
+   transform: translateY(-6px);
+   transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
 
@@ -86,7 +88,7 @@ button:hover .more-info {
     transform: translateY(0);
   }
   100% {
-    transform: translateY(-10px);
+    transform: translateY(-6px);
   }
   
 }

@@ -51,8 +51,8 @@
 
   
     <div class="container-fluid px-0 mt-4 position-absolute justify-content-end text-start w-100" style="z-index:10;">
-      <div class="row justify-content-end mt-3 pe-2 ms-auto me-0">
-        <div class="col col-12 col-md-8 col-lg-6 justify-self-end">
+      <div class="row justify-content-end mt-3 ms-auto me-0">
+        <div class="col col-9 col-md-8 col-lg-6 justify-self-end pt-4 ps-4 pe-5 ms-auto me-0 rounded-start-5" style="background-color: rgba(0,0,0,0.6);">
           <h1 class="text-light">Search Movies</h1>
           <!-- Search Form -->
           <form action="/search/results" method="GET" class="form-inline mb-4">
@@ -60,6 +60,9 @@
               <input type="text" name="searchQuery" id="search-query" class="form-control" placeholder="Search for a movie"
                 required>
               <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+            <div class="justify-self-end text-end mt-2 text-light" style="text-decoration:none">
+              powered by <a href="https://www.themoviedb.org/" target="_blank" class="text-light">The Movie Database</a>
             </div>
           </form>
         </div>
