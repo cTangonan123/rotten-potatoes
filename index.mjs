@@ -200,15 +200,16 @@ app.post('/login', async (req, res) => {
     res.render('login', { message: 'Invalid username or password' });
     return;
   }
+
   // if user exists, check if password matches
   const user = rows[0];
-
-  // const match = await bcrypt.compare(password, user.password);
   const match = password === user.password;
   if (match) {
+    // if password matches, set user_id in session and redirect to search page
     req.session.user_id = user.id;
     res.redirect('/search');
   } else {
+    // if password does not match, render login page with error message
     res.render('login', { message: 'Invalid username or password' });
   }
 });
