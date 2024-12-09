@@ -1,3 +1,23 @@
+.custom-rounded {
+  border-radius: 30px;
+}
+
+.bg-img {
+  background-image: url(../img/cinema.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  min-height: 100vh;
+}
+
+.custom-padding {
+  padding-bottom: 5vh;
+}
+
+.custom-margin {
+  margin-top: 5vh;
+}
+
 .custom-card-img-format {
   height: 15em;
   width: 100%;
@@ -22,7 +42,7 @@ button:hover .custom-card-img-format{
   position: absolute;
   top: 25%;
   left: 50%;
-  transform: translate(-50%, -25%);
+  transform: translate(-50%, -50%);
   color: white;
 }
 

@@ -38,6 +38,10 @@ app.get('/', async (req, res) => {
   res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
 });
 
+app.get('/newUser', async (req, res) => {
+  res.render('createNewAccount');
+});
+
 app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async(req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
   let watchlist = req.body.user_watchlist;
@@ -145,8 +149,45 @@ app.get('/getReview/:id', async (req, res) => {
   res.json(rows[0]);
 });
 
+// for username validation
+app.get('/api/usernameAvailable/:username', async (req, res) => {
+  let username = req.params.username;
+  let sql = `
+  SELECT * 
+  FROM user
+  WHERE user_name = ?`;
+  // let sql = `
+  //   SELECT EXISTS
+  //   (SELECT * 
+  //   FROM user
+  //   WHERE user_name = ?)`;
+  const [rows] = await conn.query(sql, [username]);
+  console.log(rows[0]);
+  if (rows.length === 0) {
+    res.json({"available": true});
+  } else {
+    res.json({"available": false});
+  }
+});
+
 
 /* POST Requests */
+
+app.post("/newUser", getUserId, getWatchListForUser, getPopularMovies, async function (req, res) {
+  let username = req.body.username;
+  let password = req.body.password;
+  let sql = `INSERT INTO user
+             (user_name, password, is_admin)
+              VALUES (?, ?, 0)`;  //hard-coded not admin
+  let params = [username, password];
+  const [rows] = await conn.query(sql, params);
+
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let watchlist = req.body.user_watchlist;
+  let popularMovies = req.body.popularMovies;
+
+  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
+});
 
 // Handle adding watchlist form submission
 app.post('/addToWatchList', getUserId, async (req, res) => {
