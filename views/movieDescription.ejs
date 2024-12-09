@@ -20,6 +20,16 @@
                     </p>
                     <div class="row justify-content-between align-items-end">
                         <div class="col col-md-6 my-2">
+                            <%if (watched.has(show.id)) {%>
+                            <a name="removeFromWatchList" id="removeFromWatchList"
+                                class="btn btn-primary w-100 write-review-btn px-1 mx-0" href="#" role="button"
+                                data-movie-id=<%=show.id%>
+                                >
+                                <i class="bi bi-check"></i>
+                                Watched
+                            </a>
+                            <%} else {%>
+                            
                             <a name="addToWatchList" id="addToWatchList"
                                 class="btn btn-primary w-100 write-review-btn px-1 mx-0" href="#" role="button"
                                 data-movie-id=<%=show.id%>
@@ -27,6 +37,7 @@
                                 <i class="bi bi-bookmark-plus-fill"></i>
                                 Watchlist
                             </a>
+                            <%}%>
 
                         </div>
                         <div class="col col-md-6 my-2">
@@ -86,6 +97,7 @@
         <!-- Modal -->
         <%- include("partials/reviewModal.ejs") %>
         <script src="/js/addToWatchList.js"></script>
+        <script src="/js/removeFromWatchList.js"></script>
 
 
         <!-- Sidebar -->

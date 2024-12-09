@@ -18,6 +18,7 @@ document.querySelectorAll('#addToWatchList').forEach(item => {
       .then(data => {
         console.log('Success:', data);
         alert(data.message)
+        location.reload()
       })
       .catch((error) => {
         console.error('Error:', error);

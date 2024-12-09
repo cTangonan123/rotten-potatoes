@@ -38,10 +38,22 @@ app.get('/', async (req, res) => {
   res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
 });
 
+app.get('/search', getUserId, getWatchListForUser, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let watchlist = req.body.watchlist;
+
+  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist });
+});
+
 // handles the results of a search query
 app.get('/search/results', getUserId, getWatchListForUser, async (req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
   let watchlist = req.body.watchlist;
+  let searchQuery = req.query.searchQuery;
+  let searchQueryURL = searchQuery.replace(/ /g, '%20');
+  let setWatched = new Set(watchlist.map(movie => movie.movie_id));
+
+  // https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=1
 
   // console.log("this is the user id: " + user_id) // for testing
   // console.log("this is the watchlist:*********")
@@ -50,7 +62,8 @@ app.get('/search/results', getUserId, getWatchListForUser, async (req, res) => {
   // }
 
   // let user_id = 2; // hard-coded for now, TODO: change to session user_id
-  const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+  // const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+  const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=1`;
   const options = {
     method: 'GET',
     headers: {
@@ -62,7 +75,7 @@ app.get('/search/results', getUserId, getWatchListForUser, async (req, res) => {
   let response = await fetch(url, options);
   let data = await response.json();
     
-  res.render('searchResults', { "shows": data.results, "user_id": user_id, "watchlist": watchlist });
+  res.render('searchResults', { "shows": data.results, "user_id": user_id, "watchlist": watchlist, "watched": setWatched });
 });
 
 // handle form submission of specific movie submission
@@ -70,6 +83,7 @@ app.get('/description', getUserId, getWatchListForUser, async (req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
   let watchlist = req.body.watchlist;
   let movie_id = req.query.id;
+  let setWatched = new Set(watchlist.map(movie => movie.movie_id));
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
     method: 'GET',
@@ -91,7 +105,7 @@ app.get('/description', getUserId, getWatchListForUser, async (req, res) => {
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
 
-  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id, "watchlist": watchlist });
+  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id, "watchlist": watchlist, "watched": setWatched });
 });
 
 // handle user profile page
@@ -173,6 +187,18 @@ app.post('/addToWatchList', getUserId, async (req, res) => {
 
   res.json({ message: 'Movie added to your watchlist' });
 });
+
+app.post('/removeFromWatchList', getUserId, async (req, res) => {
+  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  const movie_id = req.body.movie_id;
+
+  let sql = `
+    DELETE FROM watchlist 
+    WHERE movie_id = ? AND user_id = ?`;
+  await conn.query(sql, [movie_id, user_id]);
+
+  res.json({ message: 'Movie removed from your watchlist' });
+})
 
 // Handle review form submission
 app.post('/submitReview', getUserId, async (req, res) => {
