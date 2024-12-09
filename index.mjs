@@ -38,11 +38,12 @@ app.get('/', async (req, res) => {
   res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
 });
 
-app.get('/search', getUserId, getWatchListForUser, async (req, res) => {
+app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async(req, res) => {
   let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
   let watchlist = req.body.user_watchlist;
+  let popularMovies = req.body.popularMovies;
 
-  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist });
+  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
 });
 
 // handles the results of a search query
@@ -356,7 +357,22 @@ async function getReviewsForUser(req, res, next) {
   next();
 }
 
+async function getPopularMovies(req, res, next) {
+  const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`
+    }
+  };
 
+  let response = await fetch(url, options)
+  let data = await response.json();
+  req.body.popularMovies = data.results;
+
+  next();
+}
 
 app.listen(process.env.PORT, () => {                // Start the server
   console.log(`Server is running on http://localhost:${process.env.PORT}`);
