@@ -1,38 +1,40 @@
 <%- include('partials/header.ejs') %>
 <body>
-<%- include('partials/nav.ejs') %>
+  <%- include('partials/nav.ejs') %>
 
-<div class="container-fluid position-relative">
-  <div class="row justify-content-center align-items-center position-absolute" style="height:90vh;width:100vw">
-    <div class="col-12 h-100 px-0">
-      <img src="/img/login-bg-Large.jpeg" alt="" class="object-fit-cover w-100"  style="height:100%;max-width:100vw;">
-    </div>
-  </div>
-  <div class="row justify-content-center align-items-center" style="height:90vh">
-    <div class="col col-12 col-md-6 col-lg-4 rounded-5">
-      <div class="card">
-        <div class="card-body">
-          <h5 class="card-title">Login</h5>
-          <% if (message) { %>
-            <div class="alert alert-danger"><%= message %></div>
-          <% } %>
-          <form action="/login" method="POST">
-            <div class="mb-3">
-              <label for="user_name" class="form-label">Username</label>
-              <input type="text" class="form-control" id="user_name" name="user_name" required>
-            </div>
-            <div class="mb-3">
-              <label for="password" class="form-label">Password</label>
-              <input type="password" class="form-control" id="password" name="password" required>
-            </div>
-            <div class="col text-center">
-              <button type="submit" class="btn btn-primary">Login</button>
-            </div>
-          </form>
-        </div>
+  <div class="container-fluid position-relative">
+    <div class="row justify-content-center align-items-center position-absolute" style="height:90vh;width:100vw">
+      <div class="col-12 h-100 px-0">
+        <img src="/img/login-bg-Large.jpeg" alt="" class="object-fit-cover w-100"  style="height:100%;max-width:100vw;">
       </div>
     </div>
+    <div class="row justify-content-center align-items-center" style="height:90vh">
+      <div class="col col-12 col-md-6 col-lg-4 rounded-5">
+        <div class="card">
+          <div class="card-body">
+            <h5 class="card-title">Login</h5>
+            <form action="/login" method="POST">
+              <div class="mb-3">
+                <label for="user_name" class="form-label">Username</label>
+                <input type="text" class="form-control" id="user_name" name="user_name" required>
+              </div>
+              <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+              </div>
+                <div class="text-center mb-4">
+                    Don't have an account? <a href="/newUser" style="text-decoration: none">Sign up</a>
+                </div>
+              <div class="col text-center">
+                <button type="submit" class="btn btn-primary">Login</button>
+
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
   </div>
-</div>
 </body>
 </html>
