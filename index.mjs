@@ -46,8 +46,8 @@ app.get('/', async (req, res) => {
   // for (let row of rows) {
   //   console.log(row);                             
   // }
-  // res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
-  res.render('login');
+  // res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});, res) => {
+  res.render('login', { message: undefined });
 });
 
 app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async(req, res) => {
@@ -181,6 +181,7 @@ app.get('/api/usernameAvailable/:username', async (req, res) => {
 
 /* POST Requests */
 
+
 app.post('/login', async (req, res) => {
   // get the user_name and password from the form
   const user_name = req.body.user_name;
@@ -193,6 +194,7 @@ app.post('/login', async (req, res) => {
   // if user does not exist, render login page with error message
   if (rows.length === 0) {
     res.render('login', { message: 'Invalid username or password' });
+    return;
   }
   // if user exists, check if password matches
   const user = rows[0];
