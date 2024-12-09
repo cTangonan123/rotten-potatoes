@@ -1,6 +1,8 @@
 import express from 'express';                    // Import express module
 import 'dotenv/config';                           // Import dotenv module
 import mysql from 'mysql2/promise';               // Import mysql module
+import bcrypt from 'bcrypt';                       // Import bcrypt module
+import session from 'express-session';             // Import express-session module
 
 const app = express();
 
@@ -11,6 +13,15 @@ app.use(express.static('public'));                // Serve static files from the
 
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 app.use(express.json());                          // Parse JSON bodies
+
+// setting up session
+app.set('trust proxy', 1); 
+app.use(session({
+  secret: 'keyboard cat',
+  resave: false,
+  saveUninitialized: true
+  
+}))
 
 // Setup MySQL connection
 const pool = mysql.createPool({                   
@@ -30,12 +41,13 @@ const conn = await pool.getConnection();
 
 // skeleton code for initial page, replace with login handling
 app.get('/', async (req, res) => {
-  let sql = 'SELECT * FROM user';                
-  const [rows] = await conn.execute(sql);         
-  for (let row of rows) {
-    console.log(row);                             
-  }
-  res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
+  // let sql = 'SELECT * FROM user';                
+  // const [rows] = await conn.execute(sql);         
+  // for (let row of rows) {
+  //   console.log(row);                             
+  // }
+  // res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});
+  res.render('login');
 });
 
 app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async(req, res) => {
@@ -147,6 +159,37 @@ app.get('/getReview/:id', async (req, res) => {
 
 
 /* POST Requests */
+
+app.post('/login', async (req, res) => {
+  // get the user_name and password from the form
+  const user_name = req.body.user_name;
+  const password = req.body.password;
+
+  // check if user exists in database
+  let sql = 'SELECT * FROM user WHERE user_name = ?';
+  const [rows] = await conn.query(sql, [user_name]);
+
+  // if user does not exist, render login page with error message
+  if (rows.length === 0) {
+    res.render('login', { message: 'Invalid username or password' });
+  }
+  // if user exists, check if password matches
+  const user = rows[0];
+
+  // const match = await bcrypt.compare(password, user.password);
+  const match = password === user.password;
+  if (match) {
+    req.session.user_id = user.id;
+    res.redirect('/search');
+  } else {
+    res.render('login', { message: 'Invalid username or password' });
+  }
+});
+
+app.get('/logout', (req, res) => {
+  req.session.destroy();
+  res.redirect('/');
+});
 
 // Handle adding watchlist form submission
 app.post('/addToWatchList', getUserId, async (req, res) => {
@@ -316,7 +359,7 @@ app.post('/deleteReview', getUserId, async (req, res) => {
 // middleware to get userId from session
 async function getUserId(req, res, next) {
   // get user_id from session
-  let user_id = 1; // hard-coded for now, TODO: change to session user_id
+  let user_id = req.session.user_id; // hard-coded for now, TODO: change to session user_id
   req.body.user_id = user_id;
   next();
 }
