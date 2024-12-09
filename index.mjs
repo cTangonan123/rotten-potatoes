@@ -47,7 +47,7 @@ app.get('/', async (req, res) => {
   //   console.log(row);                             
   // }
   // res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});, res) => {
-  res.render('login', { message: undefined });
+  res.render('login', { message: undefined, user_id: req.session.user_id });
 });
 
 app.get('/search', getUserId, getWatchListForUser, getPopularMovies, async(req, res) => {
