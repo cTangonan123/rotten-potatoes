@@ -178,6 +178,10 @@ app.get('/api/usernameAvailable/:username', async (req, res) => {
   }
 });
 
+app.get('/newUser', async (req, res) => {
+  res.render('createNewAccount');
+});
+
 
 /* POST Requests */
 
