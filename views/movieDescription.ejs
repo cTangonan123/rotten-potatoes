@@ -22,7 +22,7 @@
                         <div class="col col-md-6 my-2">
                             <%if (watched.has(show.id)) {%>
                             <a name="removeFromWatchList" id="removeFromWatchList"
-                                class="btn btn-primary w-100 write-review-btn px-1 mx-0" href="#" role="button"
+                                class="btn  w-100 write-review-btn px-1 mx-0" href="#" role="button"
                                 data-movie-id=<%=show.id%>
                                 >
                                 <i class="bi bi-check"></i>
@@ -31,7 +31,7 @@
                             <%} else {%>
                             
                             <a name="addToWatchList" id="addToWatchList"
-                                class="btn btn-primary w-100 write-review-btn px-1 mx-0" href="#" role="button"
+                                class="btn  w-100 write-review-btn px-1 mx-0" href="#" role="button"
                                 data-movie-id=<%=show.id%>
                                 >
                                 <i class="bi bi-bookmark-plus-fill"></i>
@@ -42,13 +42,13 @@
                         </div>
                         <div class="col col-md-6 my-2">
                             <% if (reviewed.has(show.id)) {%>
-                                <a name="" id="btnReviewUpdate" class="btn btn-primary w-100 write-review-btn" href="#"
+                                <a name="" id="btnReviewUpdate" class="btn  w-100 write-review-btn" href="#"
                                 role="button" data-movie-id="<%=show.id%>" data-review-id="<%=reviewed.get(show.id)%>">
                                     <i class="bi bi-check"></i>
                                     Reviewed
                                 </a>
                             <%} else {%>   
-                                <a name="" id="writeReview" class="btn btn-primary w-100 write-review-btn" href="#"
+                                <a name="" id="writeReview" class="btn  w-100 write-review-btn" href="#"
                                     role="button" data-movie-id="<%=show.id%>">
                                     <i class="bi bi-file-earmark-text"></i>
                                     Review
