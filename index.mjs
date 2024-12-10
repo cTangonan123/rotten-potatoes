@@ -200,9 +200,11 @@ app.post('/login', async (req, res) => {
   }
   // if user exists, check if password matches
   const user = rows[0];
+  console.log(user.password)
 
-  // const match = await bcrypt.compare(password, user.password);
-  const match = password === user.password;
+  const match = await bcrypt.compare(password, user.password);
+  console.log(match)
+  // const match = password === user.password;
   if (match) {
     req.session.user_id = user.id;
     res.redirect('/search');
@@ -219,17 +221,33 @@ app.get('/logout', (req, res) => {
 app.post("/newUser", getUserId, getWatchListForUser, getPopularMovies, async function (req, res) {
   let username = req.body.username;
   let password = req.body.password;
+  const saltRounds = 10;
+  
+  
+
   let sql = `INSERT INTO user
              (user_name, password, is_admin)
               VALUES (?, ?, 0)`;  //hard-coded not admin
-  let params = [username, password];
-  const [rows] = await conn.query(sql, params);
+  
+  let hashedPassword = await bcrypt.hash(password, saltRounds).then(function(hash) {
+    // Store hash in your password DB.
+    return hash;
+    
+  });
+  let params = [username, hashedPassword];
+  let [rows] = await conn.query(sql, params);
+  
+  // let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  // let watchlist = req.body.user_watchlist;
+  // let popularMovies = req.body.popularMovies;
+    
+  res.redirect('/');
 
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
-  let watchlist = req.body.user_watchlist;
-  let popularMovies = req.body.popularMovies;
+  
 
-  res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
+  
+
+  // res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
 });
 
 // Handle adding watchlist form submission
