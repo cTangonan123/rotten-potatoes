@@ -55,8 +55,9 @@ app.get('/search', getUserId, checkAdmin, getWatchListForUser, getPopularMovies,
   let watchlist = req.body.user_watchlist;
   let popularMovies = req.body.popularMovies;
   let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
 
-  res.render('searchPage', { user_id, watchlist, popularMovies, is_admin: req.body.is_admin, user_name });
+  res.render('searchPage', { user_id, watchlist, popularMovies, is_admin, user_name });
 });
 
 // handles the results of a search query
@@ -147,7 +148,6 @@ app.get('/userProfile', getUserId, checkAdmin, getWatchListForUser, async (req, 
            LEFT JOIN movie m ON r.movie_id = m.id
     WHERE user_id = ?`;
   const [rows] = await conn.query(sql, [user_id]);
-  console.log(rows);
 
   res.render('userProfile', { "reviews": rows, "user_id": user_id, "is_admin": is_admin, "user_name": user_name, "watchlist": watchlist });
 });
@@ -190,6 +190,8 @@ app.get('/createNewAccount', (req, res) => {
   res.render('createNewAccount');
 });
 
+
+/* POST Requests */
 app.post("/newUser", async function (req, res) {
   let username = req.body.username;
   let password = req.body.password;
@@ -204,25 +206,18 @@ app.post("/newUser", async function (req, res) {
   res.redirect('/search');
 });
 
-/* POST Requests */
-
-
 app.post('/login', async (req, res) => {
-  // get the user_name and password from the form
   const user_name = req.body.user_name;
   const password = req.body.password;
 
-  // check if user exists in database
   let sql = 'SELECT * FROM user WHERE user_name = ?';
   const [rows] = await conn.query(sql, [user_name]);
 
-  // if user does not exist, render login page with error message
   if (rows.length === 0) {
     res.render('login', { message: 'Invalid username or password' });
     return;
   }
 
-  // if user exists, check if password matches
   const user = rows[0];
   console.log(user.password)
 
@@ -230,12 +225,11 @@ app.post('/login', async (req, res) => {
   console.log(match)
   // const match = password === user.password;
   if (match) {
-    // if password matches, set user_id and user_name in session and redirect to search page
     req.session.user_id = user.id;
     req.session.user_name = user.user_name;
+    req.session.is_admin = user.is_admin;
     res.redirect('/search');
   } else {
-    // if password does not match, render login page with error message
     res.render('login', { message: 'Invalid username or password' });
   }
 });
