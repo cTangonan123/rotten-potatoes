@@ -84,12 +84,18 @@
         <div class="card mb-3" >
           <div class="row g-0">
             <div class="col col-4 col-md-3 col-lg-2">
-              <img
-                      src="https://image.tmdb.org/t/p/w1280<%=review.poster_path%>"
-                      class="img-fluid rounded-start card-img align-middle"
-                      alt="movie poster of <%=review.title%>"
-                      style="max-width:100%"
-              />
+              <form action="/description">
+                <button class="btn p-0 position-relative" name="id" href="/description" value=<%=review.movie_id%>>
+                  <div class="more-info-poster bg-black rounded-pill px-2 py-1">Movie Page</div>
+                    <img
+                    src="https://image.tmdb.org/t/p/w1280<%=review.poster_path%>"
+                    class="img-fluid rounded-start card-img align-middle custom-poaster-img-format"
+                    alt="movie poster of <%=review.title%>"
+                    style="max-width:100%"/>
+                  
+                </button>
+              </form>
+              
             </div>
             <div class="col col-8 col-md-9 col-lg-10 h-100">
               <div class="card-body h-100">
