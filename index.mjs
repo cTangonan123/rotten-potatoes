@@ -253,7 +253,7 @@ app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, re
 
   let sql = 'SELECT * FROM user';
   const [users] = await conn.query(sql);
-  res.render('editUsers', { users, user_id, user_name, is_admin });
+  res.render('editUsers', { users, user_id, user_name, is_admin, watchlist });
 });
 
 app.post('/updateUser', async (req, res) => {
