@@ -47,10 +47,10 @@ app.get('/', async (req, res) => {
   //   console.log(row);                             
   // }
   // res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});, res) => {
-  res.render('login', { message: undefined, user_id: req.session.user_id });
+  res.render('login');
 });
 
-app.get('/search', getUserId, checkAdmin, getWatchListForUser, getPopularMovies, async (req, res) => {
+app.get('/search', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, getPopularMovies, async (req, res) => {
   let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
   let popularMovies = req.body.popularMovies;
@@ -61,7 +61,7 @@ app.get('/search', getUserId, checkAdmin, getWatchListForUser, getPopularMovies,
 });
 
 // handles the results of a search query
-app.get('/search/results', getUserId, checkAdmin, getWatchListForUser, getReviewsForUser, async (req, res) => {
+app.get('/search/results', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, getReviewsForUser, async (req, res) => {
   let user_id = req.body.user_id;
   let user_name = req.session.user_name;
   let is_admin = req.body.is_admin;
@@ -96,11 +96,11 @@ app.get('/search/results', getUserId, checkAdmin, getWatchListForUser, getReview
   let response = await fetch(url, options);
   let data = await response.json();
     
-  res.render('searchResults', { "shows": data.results, "user_id": user_id, "user_name": user_name, "is_admin": is_admin, "user_name": user_name, "is_admin": is_admin, "watchlist": watchlist, "watched": setWatched, "reviewed": setReviewed });
+  res.render('searchResults', { "shows": data.results, "user_id": user_id, "user_name": user_name, "is_admin": is_admin, "watchlist": watchlist, "watched": setWatched, "reviewed": setReviewed });
 });
 
 // handle form submission of specific movie submission
-app.get('/description', getUserId, checkAdmin, getWatchListForUser, getReviewsForUser, async (req, res) => {
+app.get('/description', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, getReviewsForUser, async (req, res) => {
   let user_id = req.body.user_id;
   let user_name = req.session.user_name;
   let is_admin = req.body.is_admin;
@@ -136,7 +136,7 @@ app.get('/description', getUserId, checkAdmin, getWatchListForUser, getReviewsFo
 });
 
 // handle user profile page
-app.get('/userProfile', getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
+app.get('/userProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
   let user_id = req.body.user_id;
   let is_admin = req.body.is_admin;
   let user_name = req.session.user_name;
@@ -146,7 +146,8 @@ app.get('/userProfile', getUserId, checkAdmin, getWatchListForUser, async (req, 
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
     FROM reviews r
            LEFT JOIN movie m ON r.movie_id = m.id
-    WHERE user_id = ?`;
+    WHERE user_id = ?
+    ORDER BY r.date DESC`;
   const [rows] = await conn.query(sql, [user_id]);
 
   res.render('userProfile', { "reviews": rows, "user_id": user_id, "is_admin": is_admin, "user_name": user_name, "watchlist": watchlist });
@@ -228,6 +229,7 @@ app.post('/login', async (req, res) => {
     req.session.user_id = user.id;
     req.session.user_name = user.user_name;
     req.session.is_admin = user.is_admin;
+    req.session.authenticated = true;
     res.redirect('/search');
   } else {
     res.render('login', { message: 'Invalid username or password' });
@@ -235,13 +237,15 @@ app.post('/login', async (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
-  req.session.destroy((err) => {
-    if (err) {
-      return res.redirect('/search');
-    }
-    res.clearCookie('connect.sid');
-    res.redirect('/');
-  });
+  // req.session.destroy((err) => {
+  //   if (err) {
+  //     return res.redirect('/search');
+  //   }
+  //   res.clearCookie('connect.sid');
+  //   res.redirect('/');
+  // });
+  req.session.destroy();
+  res.redirect('/');
 });
 
 app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
@@ -486,6 +490,14 @@ app.post('/updatePassword', getUserId, async (req, res) => {
 });
 
 /** MIDDLEWARE Functions **/
+// middleware to check if user is authenticated, apply first to all views that require authentication
+function isAuthenticated(req, res, next) {
+  if (!req.session.authenticated) {
+    res.redirect('/');
+  } else {
+    next();
+  }
+}
 // middleware to get userId from session
 async function getUserId(req, res, next) {
   // Get user_id from session
@@ -496,7 +508,7 @@ async function getUserId(req, res, next) {
 
 async function getWatchListForUser(req, res, next) {
   // get user_id from session
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let user_id = req.session.user_id; // hard-coded for now, TODO: change to session user_id
   
   // get watchlist for user
   let sql = `
@@ -504,7 +516,8 @@ async function getWatchListForUser(req, res, next) {
     FROM watchlist w
     LEFT JOIN movie m
     ON w.movie_id = m.id
-    WHERE w.user_id = ?;
+    WHERE w.user_id = ?
+    ORDER BY w.date DESC;
   `
   const [rows] = await conn.query(sql, [user_id]);
   req.body.user_watchlist = rows;
@@ -515,7 +528,7 @@ async function getWatchListForUser(req, res, next) {
 
 async function getReviewsForUser(req, res, next) {
   // get user_id from session
-  let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+  let user_id = req.session.user_id; // hard-coded for now, TODO: change to session user_id
   
   // get watchlist for user
   let sql = `
@@ -562,6 +575,8 @@ async function checkAdmin(req, res, next) {
 
   next();
 }
+
+
 
 app.listen(process.env.PORT, () => {                // Start the server
   console.log(`Server is running on http://localhost:${process.env.PORT}`);

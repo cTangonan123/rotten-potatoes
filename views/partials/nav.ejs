@@ -4,31 +4,37 @@
         <div class="d-flex">
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
-                    <% if (typeof user_id !== 'undefined') { %>
-                        <li class="nav-item">
-                            <span class="navbar-text">
-                                Welcome, <%= typeof user_name !== 'undefined' ? user_name : 'Guest' %>!
-                            </span>
-                        </li>
-                        <li class="nav-item">
-                            <button class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Watchlist</button>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/userProfile">Profile</a>
-                        </li>
-                        <% if (typeof is_admin !== 'undefined' && is_admin) { %>
-                            <li class="nav-item">
-                                <a class="nav-link" href="/editUsers">Edit Users</a>
-                            </li>
-                        <% } %>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Log Out</a>
-                        </li>
-                    <% } else { %>
+                    
+                    
+                    <% if (typeof user_id === 'undefined') { %>
                         <li class="nav-item">
                             <a class="nav-link" href="/createNewAccount">Sign Up</a>
                         </li>
-                    <% } %>
+                    <%} else {%>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-person-circle"></i> <%=user_name%>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li><a class="dropdown-item" href="/userProfile">Profile</a></li>
+                                <li>
+                                    <a class="dropdown-item" href="#" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Watchlist</a>
+                                </li>
+                                <%if (typeof is_admin !== 'undefined' && is_admin) {%>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li class="dropdown-item disabled">Admin</li>
+                                    <li><a class="dropdown-item" href="/editUsers">Edit Users</a></li>
+                                    <li><a class="dropdown-item" href="#">Add New Movie</a></li>
+                                <%}%>
+                            </ul>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/logout">Logout</a>
+                        </li>
+
+                    <%}%>
+                    
+
                 </ul>
             </div>
         </div>
