@@ -245,14 +245,15 @@ app.get('/logout', (req, res) => {
 });
 
 app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
-  let user_id = req.body.user_id;
+  let user_id = req.session.user_id;
   let user_name = req.session.user_name;
-  let is_admin = req.body.is_admin;
+  let is_admin = req.session.is_admin;
+  
   let watchlist = req.body.user_watchlist;
 
   let sql = 'SELECT * FROM user';
   const [users] = await conn.query(sql);
-  res.render('editUsers', { users, "user_id": user_id, "user_name": user_name, "is_admin": is_admin, "watchlist": watchlist });
+  res.render('editUsers', { users, user_id, user_name, is_admin });
 });
 
 app.post('/updateUser', async (req, res) => {
