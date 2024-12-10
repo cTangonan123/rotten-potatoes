@@ -1,10 +1,26 @@
 # TODO List:
 ## Priority List
-- [ ] Initial Search page view
-- [ ] implement `sessions` and `bcrypt` into project for Logging In
+- [x] Search page view by @Ranjita and @ChrisTangonan
+- [x] Search page routing by @ChrisTangonan
+- [x] Create New User view by @Arielle
+- [x] Create New User routing by @Arielle
+- [x] implement `sessions` and `bcrypt` into project for Logging In by @ChrisTangonan and @Vex
 - [ ] admin section to EditUsers and addMovie
-- [ ] Watchlist Sidebar
-- [ ] 
+  - [x] editUser view Routing by @Vex
+  - [ ] editUser view Frontend by @Vex
+  - [ ] addUser view Routing
+  - [ ] addUser view Frontend
+- [ ] **in order to meet the 3 form elements criteria on rubric:**
+  - [ ] convert rating on review form from number to dropdown *assigned to: @ChrisTangonan*
+    - [ ] routing
+    - [ ] frontend
+### Not Necessary
+- [ ] `/views/userProfile.ejs`: add route to movieDescription.ejs onClick of poster image in Manage Reviews section
+- [ ] `/views/partials/sidebarWatchList.ejs`: add `delete` button per movie of watchlist on partial view
+- [ ] `index.mjs`: variable migration in middleware and main requests from `req.body.{variable-name}` to `req.session.{variable-name}`
+
+
+
 
 ---
 Due by Wednesday 12/11/2024
