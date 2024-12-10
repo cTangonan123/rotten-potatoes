@@ -1,3 +1,17 @@
+<style>
+  .btnToRemoveFromWatchList {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    margin: 0;
+    transform: translateY(0);
+    transition: all cubic-bezier(0.215, 0.610, 0.355, 1) 0.3s;
+  }
+  .btnToRemoveFromWatchList:hover {
+    transform: translateY(-6px);
+  }
+</style>
+
 <div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
   <div class="offcanvas-header">
     <h5 class="offcanvas-title" id="offcanvasScrollingLabel">User's Watchlist</h5>
@@ -6,19 +20,33 @@
   <div class="offcanvas-body">
     <div class="container-fluid">
       <% for (movie of watchlist) { %>
-      <form action="/description">
-      <button class="btn p-0 w-100 mb-2 btn-outline-secondary" name="id" href="/description" value=<%=movie.movie_id%>>
-      <div class="row justify-content-between align-items-center ps-2">
-        <div class="col col-9 justify-self-stretch align-middle h-100">
-          <h5 class="text-truncate text-start"><%=movie.movie_title%></h5>
-        </div>
-        <div class="col col-3 object-fit-cover me-0">
-          <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="poster of <%=movie.movie_title%>" style="max-height:5rem">
+      <div class="container-fluid">
+        <div class="row justify-content-center align-items-center h-100">
+          <div class="col col-2 align-self-center text-center align-middle">
+              <button class="btn p-0 btnToRemoveFromWatchList" id="removeFromWatchList" data-movie-id="<%=movie.movie_id%>">
+                <i class="bi bi-x-circle-fill text-danger" style="font-size:2rem"></i>
+              </button>
+          </div>
+          <div class="col col-10">
+            <form action="/description">
+              <button class="btn p-0 w-100 mb-2 btn-outline-secondary" name="id" href="/description" value=<%=movie.movie_id%>>
+                <div class="container">
+                  <div class="row justify-content-between align-items-center ps-2">
+                    <div class="col col-9 justify-self-stretch align-middle h-100">
+                      <h5 class="text-truncate text-start"><%=movie.movie_title%></h5>
+                    </div>
+                    <div class="col col-3 object-fit-cover me-0">
+                      <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="poster of <%=movie.movie_title%>" style="max-height:5rem">
+                    </div>
+                  </div>
+                </div>
+              </button>
+            </form>
+          </div>
         </div>
       </div>
-      </button>
-      </form>
       <% } %>
     </div>
   </div>
 </div>
+<script src="/js/removeFromWatchList.js"></script>
