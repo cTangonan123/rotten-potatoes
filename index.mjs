@@ -239,9 +239,10 @@ app.get('/logout', (req, res) => {
 app.get('/editUsers', checkAdmin, async (req, res) => {
   let sql = 'SELECT * FROM user';
   const [users] = await conn.query(sql);
+  let user_id = req.session.user_id;
   let user_name = req.session.user_name;
   let is_admin = req.session.is_admin;
-  res.render('editUsers', { users, user_name, is_admin });
+  res.render('editUsers', { users, user_id, user_name, is_admin });
 });
 
 app.post('/updateUser', async (req, res) => {
