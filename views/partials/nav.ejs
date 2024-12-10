@@ -6,7 +6,9 @@
                 <ul class="navbar-nav">
                     <% if (typeof user_id !== 'undefined') { %>
                         <li class="nav-item">
-                            <span class="navbar-text">Welcome, <%= user_name %>!</span>
+                            <span class="navbar-text">
+                                Welcome, <%= typeof user_name !== 'undefined' ? user_name : 'Guest' %>!
+                            </span>
                         </li>
                         <li class="nav-item">
                             <button class="nav-link" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrolling" aria-controls="offcanvasScrolling">Watchlist</button>
@@ -14,7 +16,7 @@
                         <li class="nav-item">
                             <a class="nav-link" href="/userProfile">Profile</a>
                         </li>
-                        <% if (is_admin) { %>
+                        <% if (typeof is_admin !== 'undefined' && is_admin) { %>
                             <li class="nav-item">
                                 <a class="nav-link" href="/editUsers">Edit Users</a>
                             </li>

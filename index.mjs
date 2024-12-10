@@ -55,8 +55,9 @@ app.get('/search', checkAdmin, getUserId, getWatchListForUser, getPopularMovies,
   let watchlist = req.body.user_watchlist;
   let popularMovies = req.body.popularMovies;
   let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
 
-  res.render('searchPage', { user_id, watchlist, popularMovies, is_admin: req.body.is_admin, user_name });
+  res.render('searchPage', { user_id, watchlist, popularMovies, is_admin, user_name });
 });
 
 // handles the results of a search query
@@ -135,6 +136,7 @@ app.get('/userProfile', checkAdmin, getUserId, getWatchListForUser, async (req, 
   let user_id = req.body.user_id;
   let watchlist = req.body.user_watchlist;
   let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
 
   let sql = `
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
@@ -142,9 +144,8 @@ app.get('/userProfile', checkAdmin, getUserId, getWatchListForUser, async (req, 
            LEFT JOIN movie m ON r.movie_id = m.id
     WHERE user_id = ?`;
   const [rows] = await conn.query(sql, [user_id]);
-  console.log(rows);
 
-  res.render('userProfile', { "reviews": rows, "user_id": user_id, "watchlist": watchlist, is_admin: req.body.is_admin, user_name });
+  res.render('userProfile', { reviews: rows, user_id, watchlist, is_admin, user_name });
 });
 
 /* API Specific(associated with client-side js) GET Requests */
@@ -203,30 +204,25 @@ app.post("/newUser", async function (req, res) {
 
 
 app.post('/login', async (req, res) => {
-  // get the user_name and password from the form
   const user_name = req.body.user_name;
   const password = req.body.password;
 
-  // check if user exists in database
   let sql = 'SELECT * FROM user WHERE user_name = ?';
   const [rows] = await conn.query(sql, [user_name]);
 
-  // if user does not exist, render login page with error message
   if (rows.length === 0) {
     res.render('login', { message: 'Invalid username or password' });
     return;
   }
 
-  // if user exists, check if password matches
   const user = rows[0];
   const match = await bcrypt.compare(password, user.password);
   if (match) {
-    // if password matches, set user_id and user_name in session and redirect to search page
     req.session.user_id = user.id;
     req.session.user_name = user.user_name;
+    req.session.is_admin = user.is_admin; // Set is_admin in session
     res.redirect('/search');
   } else {
-    // if password does not match, render login page with error message
     res.render('login', { message: 'Invalid username or password' });
   }
 });
