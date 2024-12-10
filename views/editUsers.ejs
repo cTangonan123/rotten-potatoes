@@ -1,0 +1,48 @@
+<%- include('partials/header.ejs')%>
+<body>
+<%- include('partials/nav.ejs') %>
+
+<h1>Edit Users</h1>
+<ul>
+    <% users.forEach(user => { %>
+        <li>
+            <%= user.user_name %> - <%= user.is_admin ? 'Admin' : 'User' %>
+            <button onclick="openUpdateModal(<%= user.id %>, '<%= user.user_name %>', <%= user.is_admin %>)">Update</button>
+            <form action="/deleteUser" method="POST" style="display:inline;">
+                <input type="hidden" name="id" value="<%= user.id %>">
+                <button type="submit">Delete</button>
+            </form>
+        </li>
+    <% }) %>
+</ul>
+
+<!-- Update User Modal -->
+<div id="updateModal" style="display:none;">
+    <form id="updateUserForm" action="/updateUser" method="POST">
+        <input type="hidden" name="id" id="userId">
+        <label for="userName">Username:</label>
+        <input type="text" name="user_name" id="userName" required>
+        <label for="isAdmin">Is Admin:</label>
+        <input type="checkbox" name="is_admin" id="isAdmin">
+        <button type="submit">Update</button>
+        <button type="button" onclick="closeUpdateModal()">Cancel</button>
+    </form>
+</div>
+<%- include('partials/sidebarWatchlist.ejs') %>
+
+
+
+<script>
+    function openUpdateModal(id, userName, isAdmin) {
+        document.getElementById('userId').value = id;
+        document.getElementById('userName').value = userName;
+        document.getElementById('isAdmin').checked = isAdmin;
+        document.getElementById('updateModal').style.display = 'block';
+    }
+
+    function closeUpdateModal() {
+        document.getElementById('updateModal').style.display = 'none';
+    }
+</script>
+</body>
+</html>

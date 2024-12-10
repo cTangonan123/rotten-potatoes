@@ -52,7 +52,7 @@
   
     <div class="container-fluid px-0 mt-4 position-absolute justify-content-end text-start w-100" style="z-index:10;">
       <div class="row justify-content-end mt-3 ms-auto me-0">
-        <div class="col col-9 col-md-8 col-lg-6 justify-self-end pt-4 ps-4 pe-5 ms-auto me-0 rounded-start-5" style="background-color: rgba(0,0,0,0.6);">
+        <div class="col col-12 col-md-8 col-lg-6 justify-self-end pt-4 ps-4 pe-5 ms-auto me-0 rounded-start-5" style="background-color: rgba(0,0,0,0.6);">
           <h1 class="text-light">Search Movies</h1>
           <!-- Search Form -->
           <form action="/search/results" method="GET" class="form-inline mb-4">
@@ -79,21 +79,21 @@
         <% } %>
         
       </div>
-      <div class="carousel-inner object-fit-cover" style="max-height:600px;">
+      <div class="carousel-inner object-fit-cover" style="height:90vh;">
         <% for (let [index, movie] of popularMovies.entries()) { %>
-        <div class="carousel-item position-relative <%= index==0 ? 'active' : ''%>">
+        <div class="carousel-item position-relative <%= index==0 ? 'active' : ''%>"style="height:90vh">
           <form action="/description" id="popularMovie">
             <!-- <input type="hidden" name="id" value="<%=movie.id%>"> -->
           <button class="p-0 h-100 m-0 transparent" type="submit" name="id" value="<%=movie.id%>" style="text-decoration:none">
-          <div class="d-block position-absolute w-100 h-100 m-0 p-0 popMovieDisplay" style="background-color: rgba(0,0,0,0.4); max-height: 600px">
+          <div class="d-block position-absolute w-100 h-100 m-0 p-0 popMovieDisplay" style="background-color: rgba(0,0,0,0.4); height: 100vh">
             <div class="text-start container h-100" style="overflow-y: scroll;">
               <div class="row align-items-end h-100">
-                <div class="col col-12 mt-auto overflow-auto" style="max-height: 300px">
+                <div class="col col-12 mt-auto overflow-auto" style="max-height: 600px">
                   
-                  <h2 class="text-light px-4 mb-5 mb-md-0 popMovieTitle"><%=movie.title%></h2>
+                  <h2 class="text-light px-4 mb-0 popMovieTitle"><%=movie.title%></h2>
                 
-                  <div class="col col-12 col-md-8 col-lg-6 pb-3 mb-3 d-none d-md-flex">
-                    <p class="text-light px-4 overflow-auto" style="height: 120px;"><%=movie.overview%></p>
+                  <div class="col col-12 col-md-8 col-lg-6 pb-3 mb-3">
+                    <p class="text-light px-4 overflow-auto" "><%=movie.overview%></p>
                   </div>
                 </div>
               </div>
@@ -102,7 +102,7 @@
           </div>
           </button>
           </form>
-          <img src="https://image.tmdb.org/t/p/w1280<%=movie.backdrop_path%>" class="d-block w-100 ratio-16x9 object-fit-cover" alt="picture of backdrop of <%=movie.title%>">
+          <img src="https://image.tmdb.org/t/p/w1280<%=movie.backdrop_path%>" class="d-block w-100 h-100 object-fit-cover" alt="picture of backdrop of <%=movie.title%>">
         </div>
         <% } %>
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide="prev">
