@@ -186,6 +186,8 @@ app.get('/createNewAccount', (req, res) => {
   res.render('createNewAccount');
 });
 
+
+/* POST Requests */
 app.post("/newUser", async function (req, res) {
   let username = req.body.username;
   let password = req.body.password;
@@ -199,9 +201,6 @@ app.post("/newUser", async function (req, res) {
 
   res.redirect('/search');
 });
-
-/* POST Requests */
-
 
 app.post('/login', async (req, res) => {
   const user_name = req.body.user_name;
@@ -220,7 +219,7 @@ app.post('/login', async (req, res) => {
   if (match) {
     req.session.user_id = user.id;
     req.session.user_name = user.user_name;
-    req.session.is_admin = user.is_admin; // Set is_admin in session
+    req.session.is_admin = user.is_admin;
     res.redirect('/search');
   } else {
     res.render('login', { message: 'Invalid username or password' });
