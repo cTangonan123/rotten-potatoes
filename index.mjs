@@ -198,11 +198,27 @@ app.post("/newUser", async function (req, res) {
   let password = req.body.password;
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  let sqlSelect = 'SELECT * FROM user WHERE user_name = ?';
+  const [rows] = await conn.query(sqlSelect, [username]);
+
+  if (rows.length !== 0) {
+    res.render('createNewAccount', { username, password, message: 'Username unavailable.' });
+    return;
+  }
+
+  if (password.length < 6) {
+    res.render('createNewAccount', { username, password, message: 'Password must have at least six characters.' });
+    return;
+  }
+
   let sql = `INSERT INTO user (user_name, password, is_admin) VALUES (?, ?, 0)`;  // hard-coded not admin
   let params = [username, hashedPassword];
   const [result] = await conn.query(sql, params);
 
   req.session.user_id = result.insertId;  // Set the session user_id
+  req.session.user_name = username;
+  req.session.is_admin = 0;
+  req.session.authenticated = true;
 
   res.redirect('/search');
 });
