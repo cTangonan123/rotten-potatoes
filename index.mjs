@@ -222,6 +222,16 @@ app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, re
   res.render('editUsers', { users, user_id, user_name, is_admin, watchlist });
 });
 
+app.get('/messages', isAuthenticated, getWatchListForUser, getMessagesForUser, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let messages = req.session.messages;
+
+  res.render('userMessages', { user_id, user_name, is_admin, watchlist, messages });
+})
+
 // Handles redirecting to the login page once user logs out
 app.get('/logout', (req, res) => {
   // req.session.destroy((err) => {
@@ -570,6 +580,20 @@ app.post("/addUser", async function (req, res) {
   res.redirect('/editUsers');  // Redirect to user list after adding a user
 }); 
 
+app.post('/api/submitMessage', async (req, res) => {
+  let { sender_id, receiver_id, title, message } = req.body;
+  let sql = `
+    INSERT INTO message (sender_id, receiver_id, title, message)
+    VALUES (?, ?, ?, ?);
+  `
+  let rows = await conn.query(sql, [sender_id, receiver_id, title, message])
+  
+  
+
+
+  res.json({ message: 'Message received' });
+})
+
 /** MIDDLEWARE Functions **/
 // middleware to check if user is authenticated, apply first to all views that require authentication
 function isAuthenticated(req, res, next) {
@@ -662,6 +686,23 @@ async function checkAdmin(req, res, next) {
   next();
 }
 
+async function getMessagesForUser(req, res, next) {
+  let user_id = req.session.user_id;
+  let sql = `
+    with received as (
+    SELECT m.id, m.sender_id, m.receiver_id, m.title, m.message, u.user_name
+    FROM message m
+    WHERE receiver_id = ?
+  )
+    SELECT r.id, r.sender_id, r.receiver_id, r.title, r.message, u.user_name as sender_name
+    FROM received r
+    LEFT JOIN user u ON r.sender_id = u.id;`;
+
+  const [rows] = await conn.query(sql, [user_id]);
+
+  req.session.messages = rows;
+  next();
+}
 
 
 app.listen(process.env.PORT, () => {                // Start the server
