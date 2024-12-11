@@ -2,46 +2,59 @@
 <body>
 <%- include('partials/nav.ejs') %>
 
-<h1>Edit Users</h1>
-<ul>
-    <% users.forEach(user => { %>
-        <li>
-            <%= user.user_name %> - <%= user.is_admin ? 'Admin' : 'User' %>
-            <button onclick="openUpdateModal(<%= user.id %>, '<%= user.user_name %>', <%= user.is_admin %>)">Update</button>
-            <form action="/deleteUser" method="POST" style="display:inline;">
-                <input type="hidden" name="id" value="<%= user.id %>">
-                <button type="submit">Delete</button>
-            </form>
-        </li>
-    <% }) %>
-</ul>
+<div class="container">
+<div class="text-center">
+    <h1 class="my-3">Edit Users</h1>
+    <ul class="row d-flex justify-content-center">
+        <% users.forEach(user => { %>
+            <li class="col-md-3 m-2 p-3 border border-light rounded-2 list-unstyled justify-content-center">
+                <h4><%= user.user_name %></h4> <%= user.is_admin ? 'Admin' : 'User' %>
+                <div class="d-flex justify-content-center my-3">
+                    <a href="#" id="<%= user.id %>" class="user btn btn-secondary">Update</a>
+                    <form action="/deleteUser" method="POST">
+                        <input type="hidden" name="id" value="<%= user.id %>">
+                        <button type="submit" class="btn btn-danger ms-2">Delete</button>
+                    </form>
+                </div>
+            </li>
+        <% }) %>
+    </ul>
+</div>
 
 <!-- Update User Modal -->
-<div id="updateModal" style="display:none;">
+<div class="modal fade" id="userModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
     <form id="updateUserForm" action="/updateUser" method="POST">
-        <input type="hidden" name="id" id="userId">
-        <label for="userName">Username:</label>
-        <input type="text" name="user_name" id="userName" required>
-        <label for="isAdmin">Is Admin:</label>
-        <input type="checkbox" name="is_admin" id="isAdmin">
-        <button type="submit">Update</button>
-        <button type="button" onclick="closeUpdateModal()">Cancel</button>
+
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="exampleModalLabel">Edit User</h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div id="userInfo">
+                    <input type="hidden" name="id" id="userId">
+                    <label for="userName">Username:</label>
+                    <input type="text" name="user_name" id="userName" class="form-control" required>
+                    <div class="m-1">
+                        <label for="isAdmin">Is Admin:</label>
+                        <input type="checkbox" name="is_admin" id="isAdmin">
+                    </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary">Update</button>
+        </div>
+      </div>
+    </div>
     </form>
+  </div>
 </div>
+
 <%- include('partials/sidebarWatchlist.ejs') %>
 
 
 
-<script>
-    function openUpdateModal(id, userName, isAdmin) {
-        document.getElementById('userId').value = id;
-        document.getElementById('userName').value = userName;
-        document.getElementById('isAdmin').checked = isAdmin;
-        document.getElementById('updateModal').style.display = 'block';
-    }
-
-    function closeUpdateModal() {
-        document.getElementById('updateModal').style.display = 'none';
-    }
-</script>
+<script src="/js/updateUserModal.js"></script>
 <%- include("partials/footer.ejs") %>
