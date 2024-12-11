@@ -90,6 +90,20 @@ button:hover .more-info, button:hover .more-info-poster {
    transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
+.recommendedMovie {
+  transform: translateY(0);
+  filter: blur(0) brightness(.8);
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955); 
+}
+
+.recommendedMovie:hover {
+   filter: blur(.1px) brightness(1);
+   scale: 1.1;
+   transform: translateY(-6px);
+   transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+
 
 @keyframes rise {
   0% {

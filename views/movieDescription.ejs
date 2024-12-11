@@ -61,6 +61,22 @@
         </div>
 
         <hr>
+            <h3 class="text-center">Recommendations</h3>
+                <div class="container" style="width: 100vw">
+                    <div class="row justify-content-center">
+                    <%for (recommendation of recommendations) {%>
+                        <form action="/description" class="col col-2 col-lg-1 my-1  recommendedMovie">
+                            <button class="btn p-0" name="id" href="/description" value=<%=recommendation.id%>>
+                                <img src="https://image.tmdb.org/t/p/w500<%=recommendation.poster_path%>" alt="Title" class="w-100" />
+                            </button>
+                        </form>
+                    <%}%>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr>
 
         <div class="container-fluid">
             <h3 class="text-center">Reviews</h3>

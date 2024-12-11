@@ -96,6 +96,8 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
 
   let response = await fetch(url, options);
   let data = await response.json();
+
+  
     
   res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed });
 });
@@ -125,6 +127,18 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
   let data = await response.json();
   console.log(data);
 
+  const urlRecommendations = `https://api.themoviedb.org/3/movie/${movie_id}/recommendations?language=en-US&page=1`;
+  const optionsRecommendations = {
+  method: 'GET',
+  headers: {
+    accept: 'application/json',
+    Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`
+    }
+  };
+
+  let respRecommendations = await fetch(urlRecommendations, optionsRecommendations)
+  let dataRecommendations = await respRecommendations.json();
+
   let sql = `
     SELECT r.user_id, r.movie_id, r.title, r.rating, r.review, u.user_name
     FROM reviews r
@@ -133,7 +147,7 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
 
-  res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed });
+  res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed, recommendations: dataRecommendations.results });
 });
 
 // Handles rendering of the userProfile view
