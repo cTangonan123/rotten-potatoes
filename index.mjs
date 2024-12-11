@@ -172,6 +172,7 @@ app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchList
   let user_id = req.session.user_id;
   let is_admin = req.session.is_admin;
   let user_name = req.session.user_name;
+  let watchlist = req.session.user_watchlist;
   
   let users_id = req.query.id;
   let users_name = req.query.username;
@@ -205,7 +206,7 @@ app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchList
   `
   let [usersCommon] = await conn.query(sqlCommon, [user_id, users_id]);
 
-  res.render('userSocialProfile', {user_id, is_admin, user_name, users_id, users_name, usersWatchlist, usersCommon})
+  res.render('userSocialProfile', {user_id, is_admin, user_name, watchlist, users_id, users_name, usersWatchlist, usersCommon})
 })
 
 // Handles rendering of the editUsers view
