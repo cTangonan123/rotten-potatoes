@@ -107,7 +107,14 @@
                                     <%}%>
                                 </small>
                                 <br>
-                                <small class="text-muted">By: <%=review.user_name%></small>
+                                <small class="text-muted">
+                                    <form action="/getUsersProfile" class="p-0 m-0">
+                                        <input type="hidden" name="username" value="<%=review.user_name%>">
+                                        <button class="btn p-0 m-0" name="id" value="<%=review.user_id%>">
+                                            By: <%=review.user_name%>
+                                        </button>
+                                    </form>
+                                </small>
                             </p>
                         </div>
                     </div>

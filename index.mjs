@@ -168,6 +168,46 @@ app.get('/userProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForU
   res.render('userProfile', { "reviews": rows, user_id, is_admin, user_name, watchlist });
 });
 
+app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
+  let user_id = req.session.user_id;
+  let is_admin = req.session.is_admin;
+  let user_name = req.session.user_name;
+  
+  let users_id = req.query.id;
+  let users_name = req.query.username;
+  let sqlWatched = `
+    SELECT m.id, m.title, m.poster_path
+    FROM watchlist w
+    LEFT JOIN movie m
+    ON w.movie_id = m.id
+    WHERE w.user_id = ?`;
+  const [usersWatchlist] = await conn.query(sqlWatched, [users_id]);
+
+  let sqlCommon = `
+    with user1 as (
+      SELECT movie_id
+      FROM watchlist
+      WHERE user_id = ?
+    ), user2 as (
+      SELECT movie_id
+      FROM watchlist
+      WHERE user_id = ?
+    ), common as (
+      SELECT u1.movie_id
+      FROM user1 u1
+      JOIN user2 u2
+      ON u1.movie_id = u2.movie_id
+    )
+    SELECT m.id, m.title, m.poster_path
+    FROM common c
+    LEFT JOIN movie m
+    ON c.movie_id = m.id;
+  `
+  let [usersCommon] = await conn.query(sqlCommon, [user_id, users_id]);
+
+  res.render('userSocialProfile', {user_id, is_admin, user_name, users_id, users_name, usersWatchlist, usersCommon})
+})
+
 // Handles rendering of the editUsers view
 app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
   let user_id = req.session.user_id;
@@ -233,6 +273,8 @@ app.get('/api/usernameAvailable/:username', async (req, res) => {
 app.get('/createNewAccount', (req, res) => {
   res.render('createNewAccount');
 });
+
+
 
 
 /* POST Requests */
