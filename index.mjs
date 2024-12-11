@@ -259,6 +259,18 @@ app.get('/getReview/:id', async (req, res) => {
   res.json(rows[0]);
 });
 
+// Handles fetching user data
+app.get('/api/getUsers/:id', async (req, res) => {
+  let review_id = req.params.id;
+  let sql = `
+    SELECT * 
+    FROM user 
+    WHERE id = ?`;
+  const [rows] = await conn.query(sql, [review_id]);
+  console.log(rows[0]);
+  res.json(rows[0]);
+});
+
 // Handles username availability check
 app.get('/api/usernameAvailable/:username', async (req, res) => {
   let username = req.params.username;

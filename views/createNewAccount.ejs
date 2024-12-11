@@ -1,18 +1,20 @@
 <%- include('partials/header.ejs', { "pageTitle":'Create Account' }) %>
 
     <body>
+        <%- include('partials/nav.ejs') %>
+
         <div class="bg-img d-flex align-items-center text-center">
             <div class="container">
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div class="bg-light mx-5 px-4 custom-rounded">
+                        <div class="bg-light mx-5 px-4 custom-rounded bg-dark">
                             <a href="/" class="d-flex py-3">Back to sign in</a>
 
                             <form method="POST" id="signupForm" action="/newUser" class="custom-padding">
-                                <h2 class="text-center pb-2 fw-bold"> Create Account </h2>
+                                <h2 class="text-center fw-bold"> Create Account </h2>
                                 <div class="row justify-content-evenly">
                                     <div class="form-floating custom-margin ps-1 col-8">
-                                        <input type="text" class="form-control border border-dark" name="username"
+                                        <input type="text" class="form-control" name="username"
                                             id="username" placeholder="Username"
                                             value="<%= typeof username !== 'undefined' ? username : '' %>" />
                                         <label for="username">Username</label>
@@ -20,7 +22,7 @@
                                 </div>
                                 <div class="row justify-content-evenly">
                                     <div class="form-floating custom-margin ps-1 col-8">
-                                        <input type="password" class="form-control border border-dark" name="password"
+                                        <input type="password" class="form-control" name="password"
                                             id="password" placeholder="Password"
                                             value="<%= typeof password !== 'undefined' ? password : '' %>" />
                                         <label for="password">Password</label>
@@ -28,7 +30,7 @@
                                 </div>
                                 <div class="row justify-content-evenly">
                                     <div class="form-floating custom-margin ps-1 col-8">
-                                        <input type="password" class="form-control border border-dark"
+                                        <input type="password" class="form-control"
                                             name="retypedPassword" id="retypedPassword"
                                             placeholder="Re-type Password" />
                                         <label for="retypedPassword">Re-type Password</label>
@@ -50,5 +52,4 @@
             </div>
         </div>
         <script src="js/addUser.js"></script>
-    </body>
-    </html>
+        <%- include("partials/footer.ejs") %>
