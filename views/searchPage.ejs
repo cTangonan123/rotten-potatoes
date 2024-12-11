@@ -77,10 +77,10 @@
 
   
     <div id="carouselExampleCaptions" class="carousel slide mt-0 py-0" data-bs-ride="carousel">
-      <div class="carousel-indicators">
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" style="z-index:9"></button>
+      <div class="carousel-indicators" style="z-index: 11">
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1" style="z-index:11"></button>
         <% for (let i = 1; i < popularMovies.length; i++) { %>
-        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="<%=i%>" aria-label="Slide <%=i+1%>" style="z-index:9"></button>
+        <button type="button" data-bs-target="#carouselExampleCaptions" data-bs-slide-to="<%=i%>" aria-label="Slide <%=i+1%>" style="z-index:11"></button>
         <% } %>
         
       </div>
@@ -93,9 +93,9 @@
           <div class="position-absolute w-100 h-100 m-0 p-0 popMovieDisplay" style="z-index:6; height: 100vh">
             <div class="text-start container h-100">
               <div class="row align-items-end h-100 overflow-auto">
-                <div class="col col-12 mt-auto">
+                <div class="col col-12 mt-auto popMovieTitle">
                   
-                  <h2 class="text-light px-4 mb-0 popMovieTitle"><%=movie.title%></h2>
+                  <h2 class="text-light px-4 mb-0"><%=movie.title%></h2>
                 
                   <div class="col col-12 col-md-8 col-lg-6 pb-3 mb-3">
                     <p class="text-light px-4 overflow-auto" "><%=movie.overview%></p>
