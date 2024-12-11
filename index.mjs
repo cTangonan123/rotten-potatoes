@@ -50,28 +50,28 @@ app.get('/', async (req, res) => {
   res.render('login');
 });
 
-app.get('/search', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, getPopularMovies, async (req, res) => {
-  let user_id = req.body.user_id;
-  let watchlist = req.body.user_watchlist;
-  let popularMovies = req.body.popularMovies;
+app.get('/search', isAuthenticated, getWatchListForUser, getPopularMovies, async (req, res) => {
+  let user_id = req.session.user_id;
   let user_name = req.session.user_name;
   let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let popularMovies = req.session.popularMovies;
 
   res.render('searchPage', { user_id, watchlist, popularMovies, is_admin, user_name });
 });
 
 // handles the results of a search query
-app.get('/search/results', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, getReviewsForUser, async (req, res) => {
-  let user_id = req.body.user_id;
+app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUser, async (req, res) => {
+  let user_id = req.session.user_id;
   let user_name = req.session.user_name;
-  let is_admin = req.body.is_admin;
-  let watchlist = req.body.user_watchlist;
-  let reviews = req.body.user_reviews;
+  let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let reviews = req.session.user_reviews;
   let searchQuery = req.query.searchQuery;
   let searchQueryURL = searchQuery.replace(/ /g, '%20');
 
-  let setWatched = new Set(watchlist.map(movie => movie.movie_id));
-  let setReviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
+  let watched = new Set(watchlist.map(movie => movie.movie_id));
+  let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
 
 
   // https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=1
@@ -96,20 +96,20 @@ app.get('/search/results', isAuthenticated, getUserId, checkAdmin, getWatchListF
   let response = await fetch(url, options);
   let data = await response.json();
     
-  res.render('searchResults', { "shows": data.results, "user_id": user_id, "user_name": user_name, "is_admin": is_admin, "watchlist": watchlist, "watched": setWatched, "reviewed": setReviewed });
+  res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed });
 });
 
 // handle form submission of specific movie submission
-app.get('/description', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, getReviewsForUser, async (req, res) => {
-  let user_id = req.body.user_id;
+app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser, async (req, res) => {
+  let user_id = req.session.user_id;
   let user_name = req.session.user_name;
-  let is_admin = req.body.is_admin;
-  let watchlist = req.body.user_watchlist;
-  let reviews = req.body.user_reviews;
+  let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let reviews = req.session.user_reviews;
   let movie_id = req.query.id;
 
-  let setWatched = new Set(watchlist.map(movie => movie.movie_id));
-  let setReviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
+  let watched = new Set(watchlist.map(movie => movie.movie_id));
+  let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
 
   const url = `https://api.themoviedb.org/3/movie/${movie_id}?language=en-US`;
   const options = {
@@ -132,15 +132,15 @@ app.get('/description', isAuthenticated, getUserId, checkAdmin, getWatchListForU
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
 
-  res.render('movieDescription', { "show": data, "reviews": rows, "user_id": user_id, "user_name": user_name, "is_admin": is_admin, "watchlist": watchlist, "watched": setWatched, "reviewed": setReviewed });
+  res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed });
 });
 
 // handle user profile page
 app.get('/userProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
-  let user_id = req.body.user_id;
-  let is_admin = req.body.is_admin;
+  let user_id = req.session.user_id;
+  let is_admin = req.session.is_admin;
   let user_name = req.session.user_name;
-  let watchlist = req.body.user_watchlist;
+  let watchlist = req.session.user_watchlist;
 
   let sql = `
     SELECT m.id as movie_id, m.title as movie_title, m.poster_path, r.id as review_id, r.title as review_title, r.rating, review
@@ -150,7 +150,31 @@ app.get('/userProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForU
     ORDER BY r.date DESC`;
   const [rows] = await conn.query(sql, [user_id]);
 
-  res.render('userProfile', { "reviews": rows, "user_id": user_id, "is_admin": is_admin, "user_name": user_name, "watchlist": watchlist });
+  res.render('userProfile', { "reviews": rows, user_id, is_admin, user_name, watchlist });
+});
+
+app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+  
+  let watchlist = req.session.user_watchlist;
+
+  let sql = 'SELECT * FROM user';
+  const [users] = await conn.query(sql);
+  res.render('editUsers', { users, user_id, user_name, is_admin, watchlist });
+});
+
+app.get('/logout', (req, res) => {
+  // req.session.destroy((err) => {
+  //   if (err) {
+  //     return res.redirect('/search');
+  //   }
+  //   res.clearCookie('connect.sid');
+  //   res.redirect('/');
+  // });
+  req.session.destroy();
+  res.redirect('/');
 });
 
 /* API Specific(associated with client-side js) GET Requests */
@@ -193,6 +217,7 @@ app.get('/createNewAccount', (req, res) => {
 
 
 /* POST Requests */
+// handles the creation of a new account
 app.post("/newUser", async function (req, res) {
   let username = req.body.username;
   let password = req.body.password;
@@ -223,6 +248,7 @@ app.post("/newUser", async function (req, res) {
   res.redirect('/search');
 });
 
+// handles the login form submission
 app.post('/login', async (req, res) => {
   const user_name = req.body.user_name;
   const password = req.body.password;
@@ -252,30 +278,7 @@ app.post('/login', async (req, res) => {
   }
 });
 
-app.get('/logout', (req, res) => {
-  // req.session.destroy((err) => {
-  //   if (err) {
-  //     return res.redirect('/search');
-  //   }
-  //   res.clearCookie('connect.sid');
-  //   res.redirect('/');
-  // });
-  req.session.destroy();
-  res.redirect('/');
-});
-
-app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
-  let user_id = req.session.user_id;
-  let user_name = req.session.user_name;
-  let is_admin = req.session.is_admin;
-  
-  let watchlist = req.body.user_watchlist;
-
-  let sql = 'SELECT * FROM user';
-  const [users] = await conn.query(sql);
-  res.render('editUsers', { users, user_id, user_name, is_admin, watchlist });
-});
-
+// handles the update of a user
 app.post('/updateUser', async (req, res) => {
   const { id, user_name, is_admin } = req.body;
   let sql = 'UPDATE user SET user_name = ?, is_admin = ? WHERE id = ?';
@@ -283,6 +286,7 @@ app.post('/updateUser', async (req, res) => {
   res.redirect('/editUsers');
 });
 
+// handles the deletion of a user
 app.post('/deleteUser', async (req, res) => {
   const { id } = req.body;
   let sql = 'DELETE FROM user WHERE id = ?';
@@ -290,45 +294,47 @@ app.post('/deleteUser', async (req, res) => {
   res.redirect('/editUsers');
 });
 
-app.post("/newUser", async function (req, res) {
-  let username = req.body.username;
-  let password = req.body.password;
-  const saltRounds = 10;
-  // const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  // let sql = `INSERT INTO user (user_name, password, is_admin) VALUES (?, ?, 0)`;  // hard-coded not admin
-  // let params = [username, hashedPassword];
-  // const [result] = await conn.query(sql, params);
+// app.post("/newUser", async function (req, res) {
+//   let username = req.body.username;
+//   let password = req.body.password;
+//   const saltRounds = 10;
+//   // const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  // req.session.user_id = result.insertId;  // Set the session user_id
+//   // let sql = `INSERT INTO user (user_name, password, is_admin) VALUES (?, ?, 0)`;  // hard-coded not admin
+//   // let params = [username, hashedPassword];
+//   // const [result] = await conn.query(sql, params);
 
-  // res.redirect('/search');
+//   // req.session.user_id = result.insertId;  // Set the session user_id
+
+//   // res.redirect('/search');
   
   
 
-  let sql = `INSERT INTO user
-             (user_name, password, is_admin)
-              VALUES (?, ?, 0)`;  //hard-coded not admin
+//   let sql = `INSERT INTO user
+//              (user_name, password, is_admin)
+//               VALUES (?, ?, 0)`;  //hard-coded not admin
   
-  let hashedPassword = await bcrypt.hash(password, saltRounds).then(function(hash) {
-    return hash;
-  });
-  let params = [username, hashedPassword];
-  let [rows] = await conn.query(sql, params);
-  console.log(rows);
+//   let hashedPassword = await bcrypt.hash(password, saltRounds).then(function(hash) {
+//     return hash;
+//   });
+//   let params = [username, hashedPassword];
+//   let [rows] = await conn.query(sql, params);
+//   console.log(rows);
   
-  // let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
-  // let watchlist = req.body.user_watchlist;
-  // let popularMovies = req.body.popularMovies;
+//   // let user_id = req.body.user_id; // hard-coded for now, TODO: change to session user_id
+//   // let watchlist = req.body.user_watchlist;
+//   // let popularMovies = req.body.popularMovies;
     
-  res.redirect('/');
+//   res.redirect('/');
 
   
 
   
 
-  // res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
-});
+//   // res.render('searchPage', { "user_id": user_id, "watchlist": watchlist , "popularMovies": popularMovies });
+// });
+
 
 // Handle adding watchlist form submission
 app.post('/addToWatchList', getUserId, async (req, res) => {
@@ -514,13 +520,6 @@ function isAuthenticated(req, res, next) {
     next();
   }
 }
-// middleware to get userId from session
-async function getUserId(req, res, next) {
-  // Get user_id from session
-  let user_id = req.session.user_id;
-  req.body.user_id = user_id;
-  next();
-}
 
 async function getWatchListForUser(req, res, next) {
   // get user_id from session
@@ -536,7 +535,7 @@ async function getWatchListForUser(req, res, next) {
     ORDER BY w.date DESC;
   `
   const [rows] = await conn.query(sql, [user_id]);
-  req.body.user_watchlist = rows;
+  req.session.user_watchlist = rows;
 
   next();
   
@@ -553,7 +552,7 @@ async function getReviewsForUser(req, res, next) {
     WHERE r.user_id = ?;
   `
   const [rows] = await conn.query(sql, [user_id]);
-  req.body.user_reviews = rows;
+  req.session.user_reviews = rows;
 
   next();
 }
@@ -570,11 +569,20 @@ async function getPopularMovies(req, res, next) {
 
   let response = await fetch(url, options)
   let data = await response.json();
-  req.body.popularMovies = data.results;
+  req.session.popularMovies = data.results;
 
   next();
 }
 
+// deprecated after integrating session
+async function getUserId(req, res, next) {
+  // Get user_id from session
+  let user_id = req.session.user_id;
+  req.body.user_id = user_id;
+  next();
+}
+
+// deprecated after integrating session
 async function checkAdmin(req, res, next) {
   if (!req.session.user_id) {
     return res.redirect('/login');
