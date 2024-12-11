@@ -568,7 +568,7 @@ app.post("/addUser", async function (req, res) {
   const [result] = await conn.query(sql, params);
 
   res.redirect('/editUsers');  // Redirect to user list after adding a user
-});
+}); 
 
 /** MIDDLEWARE Functions **/
 // middleware to check if user is authenticated, apply first to all views that require authentication
