@@ -274,6 +274,15 @@ app.get('/createNewAccount', (req, res) => {
   res.render('createNewAccount');
 });
 
+// AddUser GET Route - Shows the form to create a new user
+app.get('/addUser', isAuthenticated, checkAdmin, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+
+  res.render('addUser', { user_id, user_name, is_admin });
+});
+
 
 
 
@@ -531,6 +540,33 @@ app.post('/updatePassword', getUserId, async (req, res) => {
   await conn.query(sql, [hashedPassword, user_id]);
 
   res.redirect('/userProfile');
+});
+
+// AddUser POST Route - Creates a new user
+app.post("/addUser", async function (req, res) {
+  let username = req.body.username;
+  let password = req.body.password;
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const conn = await getDbConnection();
+  let sqlSelect = 'SELECT * FROM user WHERE user_name = ?';
+  const [rows] = await conn.query(sqlSelect, [username]);
+
+  if (rows.length !== 0) {
+    res.render('addUser', { username, message: 'Username unavailable.' });
+    return;
+  }
+
+  if (password.length < 6) {
+    res.render('addUser', { username, message: 'Password must have at least six characters.' });
+    return;
+  }
+
+  let sql = `INSERT INTO user (user_name, password, is_admin) VALUES (?, ?, 0)`;  // hard-coded not admin
+  let params = [username, hashedPassword];
+  const [result] = await conn.query(sql, params);
+
+  res.redirect('/editUsers');  // Redirect to user list after adding a user
 });
 
 /** MIDDLEWARE Functions **/
