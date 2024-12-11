@@ -168,6 +168,47 @@ app.get('/userProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForU
   res.render('userProfile', { "reviews": rows, user_id, is_admin, user_name, watchlist });
 });
 
+app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
+  let user_id = req.session.user_id;
+  let is_admin = req.session.is_admin;
+  let user_name = req.session.user_name;
+  let watchlist = req.session.user_watchlist;
+  
+  let users_id = req.query.id;
+  let users_name = req.query.username;
+  let sqlWatched = `
+    SELECT m.id, m.title, m.poster_path
+    FROM watchlist w
+    LEFT JOIN movie m
+    ON w.movie_id = m.id
+    WHERE w.user_id = ?`;
+  const [usersWatchlist] = await conn.query(sqlWatched, [users_id]);
+
+  let sqlCommon = `
+    with user1 as (
+      SELECT movie_id
+      FROM watchlist
+      WHERE user_id = ?
+    ), user2 as (
+      SELECT movie_id
+      FROM watchlist
+      WHERE user_id = ?
+    ), common as (
+      SELECT u1.movie_id
+      FROM user1 u1
+      JOIN user2 u2
+      ON u1.movie_id = u2.movie_id
+    )
+    SELECT m.id, m.title, m.poster_path
+    FROM common c
+    LEFT JOIN movie m
+    ON c.movie_id = m.id;
+  `
+  let [usersCommon] = await conn.query(sqlCommon, [user_id, users_id]);
+
+  res.render('userSocialProfile', {user_id, is_admin, user_name, watchlist, users_id, users_name, usersWatchlist, usersCommon})
+})
+
 // Handles rendering of the editUsers view
 app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
   let user_id = req.session.user_id;
@@ -233,6 +274,17 @@ app.get('/api/usernameAvailable/:username', async (req, res) => {
 app.get('/createNewAccount', (req, res) => {
   res.render('createNewAccount');
 });
+
+// AddUser GET Route - Shows the form to create a new user
+app.get('/addUser', isAuthenticated, checkAdmin, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+
+  res.render('addUser', { user_id, user_name, is_admin });
+});
+
+
 
 
 /* POST Requests */
@@ -490,6 +542,33 @@ app.post('/updatePassword', getUserId, async (req, res) => {
 
   res.redirect('/userProfile');
 });
+
+// AddUser POST Route - Creates a new user
+app.post("/addUser", async function (req, res) {
+  let username = req.body.username;
+  let password = req.body.password;
+  const hashedPassword = await bcrypt.hash(password, 10);
+
+  const conn = await getDbConnection();
+  let sqlSelect = 'SELECT * FROM user WHERE user_name = ?';
+  const [rows] = await conn.query(sqlSelect, [username]);
+
+  if (rows.length !== 0) {
+    res.render('addUser', { username, message: 'Username unavailable.' });
+    return;
+  }
+
+  if (password.length < 6) {
+    res.render('addUser', { username, message: 'Password must have at least six characters.' });
+    return;
+  }
+
+  let sql = `INSERT INTO user (user_name, password, is_admin) VALUES (?, ?, 0)`;  // hard-coded not admin
+  let params = [username, hashedPassword];
+  const [result] = await conn.query(sql, params);
+
+  res.redirect('/editUsers');  // Redirect to user list after adding a user
+}); 
 
 /** MIDDLEWARE Functions **/
 // middleware to check if user is authenticated, apply first to all views that require authentication
