@@ -103,12 +103,13 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
 });
 
 // Handles rendering of the movieDescription view, once user clicks on a specific movie
-app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser, async (req, res) => {
+app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser, getUsersForMovie, async (req, res) => {
   let user_id = req.session.user_id;
   let user_name = req.session.user_name;
   let is_admin = req.session.is_admin;
   let watchlist = req.session.user_watchlist;
   let reviews = req.session.user_reviews;
+  let watchers = req.session.usersFromMovie;
   let movie_id = req.query.id;
 
   let watched = new Set(watchlist.map(movie => movie.movie_id));
@@ -147,7 +148,7 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
   const [rows] = await conn.query(sql, [movie_id]);
   console.log(rows);
 
-  res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed, recommendations: dataRecommendations.results });
+  res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed, watchers, recommendations: dataRecommendations.results });
 });
 
 // Handles rendering of the userProfile view
@@ -168,6 +169,7 @@ app.get('/userProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForU
   res.render('userProfile', { "reviews": rows, user_id, is_admin, user_name, watchlist });
 });
 
+// Handles rendering of the userSocialProfile view
 app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchListForUser, async (req, res) => {
   let user_id = req.session.user_id;
   let is_admin = req.session.is_admin;
@@ -222,17 +224,29 @@ app.get('/editUsers', getUserId, checkAdmin, getWatchListForUser, async (req, re
   res.render('editUsers', { users, user_id, user_name, is_admin, watchlist });
 });
 
+// Handles rendering of the users messages view
+app.get('/messages', isAuthenticated, getWatchListForUser, getMessagesForUser, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let messages = req.session.messages;
+  console.log(messages);
+
+  res.render('userMessages', { user_id, user_name, is_admin, watchlist, messages });
+})
+
 // Handles redirecting to the login page once user logs out
 app.get('/logout', (req, res) => {
-  // req.session.destroy((err) => {
-  //   if (err) {
-  //     return res.redirect('/search');
-  //   }
-  //   res.clearCookie('connect.sid');
-  //   res.redirect('/');
-  // });
-  req.session.destroy();
-  res.redirect('/');
+  req.session.destroy((err) => {
+    if (err) {
+      return res.redirect('/search');
+    }
+    res.clearCookie('connect.sid');
+    res.redirect('/');
+  });
+  // req.session.destroy();
+  // res.redirect('/');
 });
 
 /* API Specific(associated with client-side js) GET Requests */
@@ -243,6 +257,18 @@ app.get('/getReview/:id', async (req, res) => {
   let sql = `
     SELECT * 
     FROM reviews 
+    WHERE id = ?`;
+  const [rows] = await conn.query(sql, [review_id]);
+  console.log(rows[0]);
+  res.json(rows[0]);
+});
+
+// Handles fetching user data
+app.get('/api/getUsers/:id', async (req, res) => {
+  let review_id = req.params.id;
+  let sql = `
+    SELECT * 
+    FROM user 
     WHERE id = ?`;
   const [rows] = await conn.query(sql, [review_id]);
   console.log(rows[0]);
@@ -570,6 +596,21 @@ app.post("/addUser", async function (req, res) {
   res.redirect('/editUsers');  // Redirect to user list after adding a user
 }); 
 
+// Handles the submission of a message
+app.post('/api/submitMessage', async (req, res) => {
+  let { sender_id, receiver_id, title, message } = req.body;
+  let sql = `
+    INSERT INTO message (sender_id, receiver_id, title, message)
+    VALUES (?, ?, ?, ?);
+  `
+  let rows = await conn.query(sql, [sender_id, receiver_id, title, message])
+  
+  
+
+
+  res.json({ message: 'Message received' });
+})
+
 /** MIDDLEWARE Functions **/
 // middleware to check if user is authenticated, apply first to all views that require authentication
 function isAuthenticated(req, res, next) {
@@ -633,6 +674,41 @@ async function getPopularMovies(req, res, next) {
   let data = await response.json();
   req.session.popularMovies = data.results;
 
+  next();
+}
+
+// middleware to get messages for user
+async function getMessagesForUser(req, res, next) {
+  let user_id = req.session.user_id;
+  let sql = `
+    with received as (
+    SELECT m.id, m.sender_id, m.receiver_id, m.title, m.message
+    FROM message m
+    WHERE receiver_id = ?
+  )
+    SELECT r.id, r.sender_id, r.receiver_id, r.title, r.message, u.user_name as sender_name
+    FROM received r
+    LEFT JOIN user u ON r.sender_id = u.id
+    ORDER BY r.id DESC;`;
+
+  const [rows] = await conn.query(sql, [user_id]);
+
+  req.session.messages = rows;
+  next();
+}
+
+// middleware to get users for a movie
+async function getUsersForMovie(req, res, next) {
+  let movie_id = req.query.id;
+  let sql = `
+    SELECT u.id, u.user_name
+    FROM watchlist w
+    LEFT JOIN user u ON w.user_id = u.id
+    WHERE w.movie_id = ?;
+  `;
+
+  const [rows] = await conn.query(sql, [movie_id]);
+  req.session.usersFromMovie = rows;
   next();
 }
 

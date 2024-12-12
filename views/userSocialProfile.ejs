@@ -1,33 +1,153 @@
 <%-include('partials/header.ejs', {"pageTitle": 'Users Profile'})%>
 <body>
   <%-include('partials/nav.ejs')%>
-  <h3 class="text-center"><%=users_name%> has these movies in common with you:</h3>
-    <div class="container" style="width: 100vw">
-      <div class="row justify-content-center">
-        <%for (movie of usersCommon) {%>
-            <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
-              
-              <button class="btn p-0" name="id" href="/description" value="<%=movie.id%>">
-              <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="Title" class="w-100" />
+  <div class="container-fluid">
+    <div class="row justify-content-center">
+      <div class="col col-12 col-lg-8">
+        <h1 class="text-center">Profile</h1>
+        <div class="row">
+          <div class="col col-12 col-sm-6">
+            <img src="https://placehold.co/600x600/orange/white?text=<%=users_name%>" alt="Profile Picture" class="w-100 h-100" style="max-height: 40vh" />
+          </div>
+          <div class="col col-12 col-sm-6">
+            <div class="container">
+              <div class="row w-100">
+                <div class="col col-4 text-end">
+                  <strong>Username:</strong>
+                </div>
+                <div class="col col-8">
+                    <p><%=users_name%></p>
+                </div>
+                <div class="col col-4 text-end">
+                  <strong>Bio:</strong>
+                </div>
+                <div class="col col-8">
+                  <p>Lorem ipsum dolor sit amet consectetur adipisicing elit.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col col-12 text-center">
+            <button type="button" class="btn btn-primary my-4" data-bs-toggle="modal" data-bs-target="#messageModal">
+              Send Message to <%=users_name%>
             </button>
-          </form>
-        <%}%>
+          </div>
+          
+          
+          
+          
+          
       </div>
+        
     </div>
+  </div>
   <hr>
-  <h3 class="text-center"><%=users_name%> has watched:</h3>
-    <div class="container" style="width: 100vw">
-      <div class="row justify-content-center">
-        <%for (movie of usersWatchlist) {%>
-            <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
+  <h3 class="text-center"><%=users_name%> has these movies in common with you:</h3>
+  <div class="container" style="width: 100vw">
+    <div class="row justify-content-center">
+      <%for (movie of usersCommon) {%>
+          <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
+            
+            <button class="btn p-0" name="id" href="/description" value="<%=movie.id%>">
+            <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="Title" class="w-100" />
+          </button>
+        </form>
+      <%}%>
+    </div>
+  </div>
+  <hr>
+  <h3 class="text-center"><%=users_name%> has watched these movies:</h3>
+  <div class="container" style="width: 100vw">
+    <div class="row justify-content-center">
+      <%for (movie of usersWatchlist) {%>
+          <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
+            
+            <button class="btn p-0" name="id" href="/description" value="<%=movie.id%>">
+            <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="Title" class="w-100" />
+          </button>
+        </form>
+      <%}%>
+    </div>
+  </div>
+  <div
+  class="modal fade"
+  id="messageModal"
+  tabindex="-1"
+  role="dialog"
+  aria-labelledby="modalTitleId"
+  aria-hidden="true"
+  >
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitleId">
+          Write a message
+        </h5>
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal"
+          aria-label="Close"
+        ></button>
+      </div>
+      <div class="modal-body">
+        <form method="POST" action="/api/submitMessage">
+          <div class="container-fluid">
+              <div class="row">
+                <div class="col col-12">
+                  <!-- TODO: userId value needs to be included on render of page -->
+                  <input type="hidden" name="from" id="mSenderId" value="<%=user_id%>"> 
+                  
+                  <!--  value needs to be included dynamically upon click -->
+                  <input type="hidden" name="to" id="mReceiverId" value="<%=users_id%>"> 
+                </div>
+              </div>
+              <div class="row">
+                <div class="form-floating mb-3 col-12">
+                  <input
+                    type="text"
+                    class="form-control"
+                    name="title"
+                    id="mTitle"
+                    placeholder="Title"
+                    required
+                  />
+                  <label for="mTitle">Title</label>
+                </div>   
+              </div>
               
-              <button class="btn p-0" name="id" href="/description" value="<%=movie.id%>">
-              <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="Title" class="w-100" />
-            </button>
-          </form>
-        <%}%>
+              <div class="row">
+                <div class="col col-12">
+                  <div class="form-group">
+                    <label for="review">Review</label>
+                    <textarea
+                      class="form-control"
+                      name="message"
+                      id="mMessage"
+                      rows="3"
+                      placeholder="Write your message here"
+                      required
+                    ></textarea>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+            >
+            Close
+          </button>
+          <button type="submit" class="btn btn-primary rBtnSave">Save</button>
+        </form>
       </div>
     </div>
+  </div>
+</div>
+<script src="/js/messageModal.js"></script>
 
   <%- include("partials/sidebarWatchlist.ejs") %>
   <%-include('partials/footer.ejs')%>

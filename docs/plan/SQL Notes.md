@@ -3,14 +3,16 @@
 - Follow along the instructions set under [Creating a MySQL Database in FastComet](https://docs.google.com/document/d/1vygpxkGuA7CecHa55cSbh7_v7Bj9C6dV0IettNYGEkI/edit?tab=t.0#heading=h.iil8ahsceu1b)
 - Then under [Step 1. of lab 5](https://docs.google.com/document/d/15uTrxXPhH4T1vjv7r7CZCkDQYtZ7PVKsJ55VqTAe9ig/edit?tab=t.0) follow along up until you reach the point of copying the sql, instead use the [snippet below](#sql-snippet-for-generating-tables) instead of the SQL code for quotes in the designated database you created.
 - after you run this code in fast comet you should be able to access your new database with your own designated credentials. and be able to see the queries you generate.
-### SQL snippet for generating tables(UPDATED)
+
+### !!!!!!!SQL snippet for generating the message(UPDATED)
+if you already have your database initialized, please run this code snippet in order to have a message table included in your project.
 ```sql
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Dec 09, 2024 at 06:31 PM
+-- Generation Time: Dec 11, 2024 at 06:22 PM
 -- Server version: 8.0.40
 -- PHP Version: 8.3.14
 
@@ -31,17 +33,101 @@ SET time_zone = "+00:00";
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `message`
+--
+
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message` (
+  `id` int NOT NULL,
+  `receiver_id` int NOT NULL,
+  `sender_id` int NOT NULL,
+  `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+
+--
+-- Indexes for dumped tables
+--
+
+--
+-- Indexes for table `message`
+--
+ALTER TABLE `message`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- AUTO_INCREMENT for dumped tables
+--
+
+--
+-- AUTO_INCREMENT for table `message`
+--
+ALTER TABLE `message`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+```
+
+
+### SQL snippet for generating All tables(UPDATED)
+```sql
+-- phpMyAdmin SQL Dump
+-- version 5.2.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: localhost:3306
+-- Generation Time: Dec 11, 2024 at 06:30 PM
+-- Server version: 8.0.40
+-- PHP Version: 8.3.14
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+
+--
+-- Database: `footangt_rotten_potatoes`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `message`
+--
+
+DROP TABLE IF EXISTS `message`;
+CREATE TABLE `message` (
+  `id` int NOT NULL,
+  `receiver_id` int NOT NULL,
+  `sender_id` int NOT NULL,
+  `title` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `message` varchar(300) COLLATE utf8mb4_unicode_ci NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `movie`
 --
 
 DROP TABLE IF EXISTS `movie`;
 CREATE TABLE `movie` (
   `id` int NOT NULL,
-  `title` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `title` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `release_date` date NOT NULL,
-  `overview` varchar(700) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `backdrop_path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `poster_path` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `overview` varchar(700) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `backdrop_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
+  `poster_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
   `vote_average` float NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -58,7 +144,7 @@ CREATE TABLE `reviews` (
   `movie_id` int NOT NULL,
   `title` varchar(40) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `rating` int NOT NULL,
-  `review` varchar(500) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `review` varchar(500) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -81,11 +167,14 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`id`, `is_admin`, `user_name`, `password`) VALUES
-(1, 1, 'chris', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'), -- password is 'cst336'
-(2, 1, 'arielle', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'), -- password is 'cst336'
-(3, 1, 'alex', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'), -- password is 'cst336'
-(4, 1, 'ranjita', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'), -- password is 'cst336'
-(5, 0, 'user', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'); -- password is 'cst336'
+(1, 1, 'chris', '$2b$10$qV/3GE6mcnR9d9T3YARuzO1bFJ8SEJbIehVmhI7BSVdlY.dzJkwqC'),
+(2, 1, 'arielle', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'),
+(3, 1, 'alex', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'),
+(4, 1, 'ranjita', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'),
+(5, 0, 'user', '$2a$10$G9atEzBijDB.bjK8o0B4YerTTiuHbqtXOkSxsOKm5ok7jpXFVGnUa'),
+(6, 0, 'user1', '$2b$10$J8AyOc2mIV4L.K/mMd.sjeelWUS6cVSnIbR1KJxZPH0oTHIGeJTTu'),
+(7, 0, 'user2', '$2b$10$i8/O/W0kqJgTPIYm40v6hurkLMq.oEeUmr/XgKtdUPtUkLjgXAPYu'),
+(9, 1, 'user4', '$2b$10$AY/R0W3FvaMbS8J/GzR4Hem0aRYJW1VLagippbEF/o585ZW2bSP3W');
 
 -- --------------------------------------------------------
 
@@ -103,6 +192,12 @@ CREATE TABLE `watchlist` (
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `message`
+--
+ALTER TABLE `message`
+  ADD PRIMARY KEY (`id`);
 
 --
 -- Indexes for table `movie`
@@ -138,6 +233,12 @@ ALTER TABLE `watchlist`
 --
 
 --
+-- AUTO_INCREMENT for table `message`
+--
+ALTER TABLE `message`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `reviews`
 --
 ALTER TABLE `reviews`
@@ -147,12 +248,13 @@ ALTER TABLE `reviews`
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
 
 ```
 
