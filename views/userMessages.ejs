@@ -1,7 +1,49 @@
 <%-include('partials/header.ejs', {"pageTitle": 'Messages'})%>
 <body>
   <%-include('partials/nav.ejs')%>
-  <h1>Hello world</h1>
+  <div class="container">
+    <div class="row justify-content-center">
+      <div class="col col-12 text-center">
+        <h1>Messages</h1>
+      </div>
+    </div>
+    <%for (message of messages) {%>
+      <div class="row">
+        <div class="card mb-3 col" style="max-width: 100%;" >
+          <div class="row g-0">
+            <div class="col-md-2 d-none d-md-flex">
+              <img
+                src="https://placehold.co/600x600/orange/white?text=<%=message.sender_name%>"
+                class="img-fluid rounded-start w-100 h-100"
+                alt="Card title"
+              />
+            </div>
+            <div class="col-md-10">
+              <div class="card-body">
+                <h5 class="card-title"><%=message.title%></h5>
+                <p class="card-text">
+                  <%=message.message%>
+                </p>
+                
+                  <small class=" card-text text-muted"
+                    >
+                    <form action="/getUsersProfile" class="p-0 m-0">
+                      <input type="hidden" name="username" value="<%=message.sender_name%>">
+                      <button class="btn p-0 m-0" name="id" value="<%=message.sender_id%>">
+                          By: <%=message.sender_name%>
+                      </button>
+                    </form>
+                    
+                    </small
+                  >
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    <%}%>
+  </div>
 
 <%- include("partials/sidebarWatchlist.ejs") %>
 <%-include('partials/footer.ejs')%>
