@@ -65,7 +65,7 @@
                 <div class="container" style="width: 100vw">
                     <div class="row justify-content-center">
                     <%for (recommendation of recommendations) {%>
-                        <form action="/description" class="col col-2 col-lg-1 my-1  recommendedMovie">
+                        <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
                             <button class="btn p-0" name="id" href="/description" value=<%=recommendation.id%>>
                                 <img src="https://image.tmdb.org/t/p/w500<%=recommendation.poster_path%>" alt="Title" class="w-100" />
                             </button>
@@ -73,8 +73,22 @@
                     <%}%>
                     </div>
                 </div>
-            </div>
-        </div>
+        <hr>
+            <h3 class="text-center">User's Who've Also Watched <em><%=show.title%></em></h3>
+                <div class="container" style="width: 100vw">
+                    <div class="row justify-content-center">
+                    <%for (user of watchers) {%>
+                        
+                        <form action="/getUsersProfile" class="col col-2 col-lg-1 my-1 recommendedMovie">
+                            <input type="hidden" name="username" value="<%=user.user_name%>">
+                            <button class="btn p-0 m-0" name="id" value="<%=user.id%>">
+                                <img src="https://placehold.co/100x100/orange/white?text=<%=user.user_name%>" alt="user_name is <%=user.user_name%>" class="w-100" />
+                            </button>
+                        </form>
+                        
+                    <%}%>
+                    </div>
+                </div>
 
         <hr>
 
