@@ -50,6 +50,7 @@ app.get('/', async (req, res) => {
   res.render('login');
 });
 
+
 // Handles rendering of the searchPage view
 app.get('/search', isAuthenticated, getWatchListForUser, getPopularMovies, async (req, res) => {
   let user_id = req.session.user_id;
