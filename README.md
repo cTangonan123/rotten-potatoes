@@ -1,4 +1,8 @@
 # Rotten Potatoes
+## Final Submission Docs
+- [Final Project Document](./docs/FinalProject_RottenPotatoes.pdf)
+- [SQL Schema ER Diagram](/docs/img/er-dgrm-rotten-potatoes.png)
+- [SQL Schema File](./docs/rotten_potatoes.sql)
 ## Table of Contents
 - [Build Instructions](#build-instruction)
 - [Git Instructions](#git-instructions)
