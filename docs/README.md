@@ -1,10 +1,17 @@
 # Table of Contents
 \<\< [Back to Main Page](/README.md)
+## Final Submission Specific
+- [Final Project Document](./FinalProject_RottenPotatoes.pdf)
+- [SQL Schema file](./rotten_potatoes.sql)
+- [ER Diagram Associated with above SQL file](./img/er-dgrm-rotten-potatoes.png)
+
+## Planning Specific
 - [TODO's List](/docs/plan/TODO.md)
 - [View Diagrams](/docs/plan/diagrams/view.md)
 - [State Diagrams](/docs/plan/diagrams/state.md)
 - [UI Diagrams](/docs/plan/diagrams/ui.md)
 - [API Notes](/docs/plan/API%20Notes.md)
+- [Diagrams PostProject](/docs/plan/diagrams/postProject.md)
 - [SQL Notes](/docs/plan/SQL%20Notes.md)
 
 ## Overall Plan
