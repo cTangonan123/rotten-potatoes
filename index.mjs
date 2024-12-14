@@ -3,6 +3,8 @@ import 'dotenv/config';                           // Import dotenv module
 import mysql from 'mysql2/promise';               // Import mysql module
 import bcrypt from 'bcrypt';                       // Import bcrypt module
 import session from 'express-session';             // Import express-session module
+import {RedisStore} from "connect-redis"
+import {createClient} from "redis"
 
 const app = express();
 
@@ -14,14 +16,26 @@ app.use(express.static('public'));                // Serve static files from the
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 app.use(express.json());                          // Parse JSON bodies
 
-// setting up session
-app.set('trust proxy', 1); 
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true
-  
-}))
+// Initialize client.
+let redisClient = createClient()
+redisClient.connect().catch(console.error)
+
+// Initialize store.
+let redisStore = new RedisStore({
+  client: redisClient,
+  prefix: "myapp:",
+})
+
+// Initialize session storage.
+app.use(
+  session({
+    store: redisStore,
+    resave: false, // required: force lightweight session keep alive (touch)
+    saveUninitialized: false, // recommended: only save session when data exists
+    secret: process.env.SESSION_SECRET,
+  }),
+)
+
 
 // Setup MySQL connection
 const pool = mysql.createPool({                   
@@ -41,13 +55,12 @@ const conn = await pool.getConnection();
 
 // Handles rendering of the login view
 app.get('/', async (req, res) => {
-  // let sql = 'SELECT * FROM user';
-  // const [rows] = await conn.execute(sql);         
-  // for (let row of rows) {
-  //   console.log(row);                             
-  // }
-  // res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});, res) => {
-  res.render('login');
+  if (req.session.authenticated) {
+    res.redirect('/search');
+  } else {
+    res.render('login');
+  }
+  
 });
 
 
@@ -75,17 +88,6 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
   let watched = new Set(watchlist.map(movie => movie.movie_id));
   let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
 
-
-  // https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=1
-
-  // console.log("this is the user id: " + user_id) // for testing
-  // console.log("this is the watchlist:*********")
-  // for (let movie of watchlist) {
-  //   console.log(movie)
-  // }
-
-  // let user_id = 2;
-  // const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
   const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=1`;
   const options = {
     method: 'GET',
@@ -127,7 +129,7 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
 
   let response = await fetch(url, options);
   let data = await response.json();
-  console.log(data);
+  // console.log(data);
 
   const urlRecommendations = `https://api.themoviedb.org/3/movie/${movie_id}/recommendations?language=en-US&page=1`;
   const optionsRecommendations = {
@@ -147,7 +149,7 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
            LEFT JOIN user u ON r.user_id = u.id
     WHERE movie_id = ?`;
   const [rows] = await conn.query(sql, [movie_id]);
-  console.log(rows);
+  // console.log(rows);
 
   res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed, watchers, recommendations: dataRecommendations.results });
 });
@@ -232,7 +234,7 @@ app.get('/messages', isAuthenticated, getWatchListForUser, getMessagesForUser, a
   let is_admin = req.session.is_admin;
   let watchlist = req.session.user_watchlist;
   let messages = req.session.messages;
-  console.log(messages);
+  // console.log(messages);
 
   res.render('userMessages', { user_id, user_name, is_admin, watchlist, messages });
 })
@@ -260,7 +262,7 @@ app.get('/getReview/:id', async (req, res) => {
     FROM reviews 
     WHERE id = ?`;
   const [rows] = await conn.query(sql, [review_id]);
-  console.log(rows[0]);
+  // console.log(rows[0]);
   res.json(rows[0]);
 });
 
@@ -272,7 +274,7 @@ app.get('/api/getUsers/:id', async (req, res) => {
     FROM user 
     WHERE id = ?`;
   const [rows] = await conn.query(sql, [review_id]);
-  console.log(rows[0]);
+  // console.log(rows[0]);
   res.json(rows[0]);
 });
 
@@ -289,7 +291,7 @@ app.get('/api/usernameAvailable/:username', async (req, res) => {
   //   FROM user
   //   WHERE user_name = ?)`;
   const [rows] = await conn.query(sql, [username]);
-  console.log(rows[0]);
+  // console.log(rows[0]);
   if (rows.length === 0) {
     res.json({"available": true});
   } else {
@@ -310,9 +312,6 @@ app.get('/addUser', isAuthenticated, checkAdmin, async (req, res) => {
 
   res.render('addUser', { user_id, user_name, is_admin });
 });
-
-
-
 
 /* POST Requests */
 // Handles the creation of a new account
@@ -360,10 +359,10 @@ app.post('/login', async (req, res) => {
   }
 
   const user = rows[0];
-  console.log(user.password)
+  // console.log(user.password)
 
   const match = await bcrypt.compare(password, user.password);
-  console.log(match)
+  // console.log(match)
   // const match = password === user.password;
   if (match) {
     req.session.user_id = user.id;
@@ -417,7 +416,7 @@ app.post('/addToWatchList', getUserId, async (req, res) => {
   let result = await fetch(url, options)
     .then(res => res.json())
     .then(data => {
-      console.log(data);
+      // console.log(data);
       return data;
       
     }) 
@@ -478,7 +477,7 @@ app.post('/submitReview', getUserId, async (req, res) => {
     let result = await fetch(url, options)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        // console.log(data);
         return data;
         
       }) // where to do stuff
