@@ -3,8 +3,10 @@ import 'dotenv/config';                           // Import dotenv module
 import mysql from 'mysql2/promise';               // Import mysql module
 import bcrypt from 'bcrypt';                       // Import bcrypt module
 import session from 'express-session';             // Import express-session module
-import {RedisStore} from "connect-redis"
-import {createClient} from "redis"
+
+// would need to install these packages if using redis
+// import {RedisStore} from "connect-redis"   
+// import {createClient} from "redis"
 
 const app = express();
 
