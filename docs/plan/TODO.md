@@ -1,23 +1,12 @@
 # TODO List:
 ## Priority List
-- [x] Search page view by @Ranjita and @ChrisTangonan
-- [x] Search page routing by @ChrisTangonan
-- [x] Create New User view by @Arielle
-- [x] Create New User routing by @Arielle
-- [x] implement `sessions` and `bcrypt` into project for Logging In by @ChrisTangonan and @Vex
-- [ ] admin section to EditUsers and addMovie
-  - [x] editUser view Routing by @Vex
-  - [ ] editUser view Frontend by @Vex
-  - [ ] addUser view Routing
-  - [ ] addUser view Frontend
-- [ ] **in order to meet the 3 form elements criteria on rubric:**
-  - [ ] convert rating on review form from number to dropdown *assigned to: @ChrisTangonan*
-    - [ ] routing
-    - [ ] frontend
-### Not Necessary
-- [ ] `/views/userProfile.ejs`: add route to movieDescription.ejs onClick of poster image in Manage Reviews section
-- [ ] `/views/partials/sidebarWatchList.ejs`: add `delete` button per movie of watchlist on partial view
-- [ ] `index.mjs`: variable migration in middleware and main requests from `req.body.{variable-name}` to `req.session.{variable-name}`
+- [ ] `grep -irl` minimizing all `.poster_path` image sizes and `.backdrop_path` image sizes
+- [ ] minimize all place holder images
+- [ ] change any poster or backdrop to render client-side
+  - [how to link to specific line in markdown](/docs/plan/TODO.md?plain=1#L3)
+- [ ] look up express documentation and properly implement
+  - test login, close out then re-enter
+  - test idle, set timeout
 
 
 
@@ -56,7 +45,7 @@ Due by Saturday 11/30/2024
   - [x] State Diagrams by @cTangonan123
   - [ ] ~~UI Diagrams by @alexcbensen~~
 
-
+  - 
 
 <sub>\< [Back to Docs](/docs/README.md)</sub>
 <sub>\<\< [Back to Main Page](/README.md)</sub>
