@@ -5,7 +5,7 @@
    <%- include('partials/nav.ejs') %>
 
   <!-- Main Content Section -->
-  <div class="container-fluid px-0 position-relative">
+  <div class="container-fluid px-0 pt-5 position-relative">
 
   
     <div class="container-fluid px-0 mt-4 position-absolute justify-content-end text-start w-100" style="z-index:10;">
@@ -28,9 +28,9 @@
     </div>
 
   <!-- Carousel -->
-  <div class="container-fluid px-0 py-0 mt-0 position-absolute h-100" style="z-index:5; background-color: rgba(0,0,0,0.6)">
+  <div class="container-fluid px-0 position-absolute" style="z-index:5; background-color: rgba(0,0,0,0.6); height:95vh">
   </div>
-  <div class="container-fluid px-0 py-0 mt-0 position-absolute h-100" style="z-index:-1; background-color: rgba(0,0,0,1)">
+  <div class="container-fluid px-0 position-absolute" style="z-index:-1; background-color: rgba(0,0,0,1); height:95vh">
   </div>
 
   
@@ -48,7 +48,7 @@
           <form action="/description" id="popularMovie" class="hidden">
             <!-- <input type="hidden" name="id" value="<%=movie.id%>"> -->
           <button class="p-0 h-100 m-0 transparent" type="submit" name="id" value="<%=movie.id%>" style="text-decoration:none">
-          <div class="position-absolute w-100 h-100 m-0 p-0 popMovieDisplay" style="z-index:6; height: 100vh">
+          <div class="position-absolute w-100 h-100 m-0 p-0 popMovieDisplay" style="z-index:6; height: 95vh">
             <div class="text-start container h-100">
               <div class="row align-items-end h-100 overflow-auto">
                 <div class="col col-12 mt-auto popMovieTitle">
@@ -79,6 +79,10 @@
       </div>
     </div>
   </div>
+
+  <script>
+    document.querySelector(".navBarSearch").classList.add("d-none");
+  </script>
 
   <!-- Footer Section -->
   <%- include('partials/sidebarWatchlist.ejs') %>
