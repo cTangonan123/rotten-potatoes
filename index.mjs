@@ -16,25 +16,42 @@ app.use(express.static('public'));                // Serve static files from the
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 app.use(express.json());                          // Parse JSON bodies
 
-// Initialize client.
-let redisClient = createClient()
-redisClient.connect().catch(console.error)
+/* Session Configuration */
+var sess = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {}
+}
 
-// Initialize store.
-let redisStore = new RedisStore({
-  client: redisClient,
-  prefix: "myapp:",
-})
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
 
-// Initialize session storage.
-app.use(
-  session({
-    store: redisStore,
-    resave: false, // required: force lightweight session keep alive (touch)
-    saveUninitialized: false, // recommended: only save session when data exists
-    secret: process.env.SESSION_SECRET,
-  }),
-)
+app.use(session(sess))
+
+
+/* Redis Session Storage */
+// // Initialize client.
+// let redisClient = createClient()
+// redisClient.connect().catch(console.error)
+
+// // Initialize store.
+// let redisStore = new RedisStore({
+//   client: redisClient,
+//   prefix: "myapp:",
+// })
+
+// // Initialize session storage.
+// app.use(
+//   session({
+//     store: redisStore,
+//     resave: false, // required: force lightweight session keep alive (touch)
+//     saveUninitialized: false, // recommended: only save session when data exists
+//     secret: process.env.SESSION_SECRET,
+//   }),
+// )
 
 
 // Setup MySQL connection

@@ -1,4 +1,4 @@
-<nav class="navbar navbar-expand navbar-dark bg-dark py-3">
+<nav class="navbar navbar-expand navbar-dark bg-dark py-3 fixed-top">
     <div class="container-fluid">
         <a class="navbar-brand" href="/search"><i class="fi fi-rs-potato"></i>Rotten Potatoes</a>
         <div class="d-flex">
@@ -26,11 +26,21 @@
                                     <li class="dropdown-item disabled">Admin</li>
                                     <li><a class="dropdown-item" href="/editUsers">Edit Users</a></li>
                                 <%}%>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="dropdown-item">
+                                    <a class="nav-link" href="/logout">Logout</a>
+                                </li>
+
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Logout</a>
-                        </li>
+                        
+                            
+                        <form class="d-flex navBarSearch" role="search" action="/search/results" method="GET">
+                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search" name="searchQuery">
+                            <button class="btn write-review-btn" type="submit">Search</button>
+                        </form>
+                        
+                        
 
                     <%}%>
                     

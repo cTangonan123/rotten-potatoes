@@ -7,8 +7,6 @@
   - [Compare Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L46)
   - [Users Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L60)
 - [x] look up express documentation and properly implement
-  - test login, close out then re-enter
-  - test idle, set timeout
 
 
 
