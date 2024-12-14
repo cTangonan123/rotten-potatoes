@@ -1,10 +1,12 @@
 # TODO List:
 ## Priority List
-- [ ] `grep -irl` minimizing all `.poster_path` image sizes and `.backdrop_path` image sizes
-- [ ] minimize all place holder images
+- [x] `grep -irl` minimizing all `.poster_path` image sizes and `.backdrop_path` image sizes
+- [x] minimize all place holder images
 - [ ] change any poster or backdrop to render client-side
-  - [how to link to specific line in markdown](/docs/plan/TODO.md?plain=1#L3)
-- [ ] look up express documentation and properly implement
+  - [recommended Movies Section in movieDescription.ejs](/views/movieDescription.ejs?plain=1#L64)
+  - [Compare Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L46)
+  - [Users Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L60)
+- [x] look up express documentation and properly implement
   - test login, close out then re-enter
   - test idle, set timeout
 
