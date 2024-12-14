@@ -3,9 +3,9 @@
 <body>
     <%- include("partials/nav.ejs") %>
 
-        <div class="container">
+        <div class="container" style="margin-top:5rem;">
             <div class="row justify-content-center">
-                <img class="custom-img col-3 my-4" src="https://image.tmdb.org/t/p/w500<%=show.poster_path%>"
+                <img class="custom-img col-3 my-4" src="https://image.tmdb.org/t/p/w342<%=show.poster_path%>"
                     alt="image from <%=show.title%>">
                 <div class="col-5 my-4">
                     <h1>
@@ -67,7 +67,7 @@
                     <%for (recommendation of recommendations) {%>
                         <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
                             <button class="btn p-0" name="id" href="/description" value=<%=recommendation.id%>>
-                                <img src="https://image.tmdb.org/t/p/w500<%=recommendation.poster_path%>" alt="Title" class="w-100" />
+                                <img src="https://image.tmdb.org/t/p/w92<%=recommendation.poster_path%>" alt="Title" class="w-100" />
                             </button>
                         </form>
                     <%}%>
@@ -82,7 +82,7 @@
                         <form action="/getUsersProfile" class="col col-2 col-lg-1 my-1 recommendedMovie">
                             <input type="hidden" name="username" value="<%=user.user_name%>">
                             <button class="btn p-0 m-0" name="id" value="<%=user.id%>">
-                                <img src="https://placehold.co/100x100/orange/white?text=<%=user.user_name%>" alt="user_name is <%=user.user_name%>" class="w-100" />
+                                <img src="https://placehold.co/80x80/orange/white?text=<%=user.user_name%>" alt="user_name is <%=user.user_name%>" class="w-100" />
                             </button>
                         </form>
                         

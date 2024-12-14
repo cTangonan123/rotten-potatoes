@@ -1,9 +1,10 @@
 <%- include('partials/header.ejs', { "pageTitle":'Search Results' }) %>
 
 <body>
+  
   <%- include("partials/nav.ejs") %>
 
-  <div class="container">
+  <div class="container" style="margin-top:5rem;">
     <div class="row mx-4">
       <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         <% for (show of shows) { %>
@@ -13,20 +14,14 @@
                 <button class="btn p-0" name="id" href="/description" value=<%=show.id%>>
                   <div class="more-info bg-black rounded-pill px-3 py-1">More Info</div>
                   <%if (show.backdrop_path) {%>
-                    <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://image.tmdb.org/t/p/w500<%=show.backdrop_path%>" alt="image from <%=show.title%>">
+                    <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://image.tmdb.org/t/p/w300<%=show.backdrop_path%>" alt="image from <%=show.title%>">
 
                   <%} else {%>
-                    <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://placehold.co/600x300/orange/white?text=<%=show.title.replace(/ /g, '%20')%>" alt="image from <%=show.title%>">
+                    <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://placehold.co/300x150/orange/white?text=<%=show.title.replace(/ /g, '%20')%>" alt="image from <%=show.title%>">
                   <%}%>
                 </button>
               </form>
               <div class="card-body">
-                <!-- <h5 class="card-title"><%= show.title %></h5>
-                <p class="card-text"><%= show.overview %></p>
-                <div class="mb-0 mt-auto bg-primary">
-                  <a href="#" class="write-review-btn btn" data-id="<%=show.id%>">Write Review</a> 
-                  <a href="#" class="float float-end pt-2 text-dark">Read Reviews</a>
-                </div> -->
                 <h5 class="card-title text-truncate"><%=show.title%></h5>
                 <p class="card-text d-block w-100 overflow-auto w-100 resultMovieOverview" style="height:10rem"><%=show.overview%></p>
                 <div class="container-fluid">
@@ -107,6 +102,6 @@
   <!-- Sidebar -->
   <%- include("partials/sidebarWatchlist.ejs") %>
   
-
+  
 
   <%- include("partials/footer.ejs") %>

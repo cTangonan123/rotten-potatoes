@@ -1,7 +1,7 @@
 <%-include('partials/header.ejs', {"pageTitle": 'Messages'})%>
 <body>
   <%-include('partials/nav.ejs')%>
-  <div class="container">
+  <div class="container" style="margin-top:5rem;">
     <div class="row justify-content-center">
       <div class="col col-12 text-center">
         <h1>Messages</h1>
@@ -13,7 +13,7 @@
           <div class="row g-0">
             <div class="col-md-2 d-none d-md-flex">
               <img
-                src="https://placehold.co/600x600/orange/white?text=<%=message.sender_name%>"
+                src="https://placehold.co/300x300/orange/white?text=<%=message.sender_name%>"
                 class="img-fluid rounded-start w-100 h-100"
                 alt="Card title"
               />

@@ -1,13 +1,13 @@
 <%-include('partials/header.ejs', {"pageTitle": 'Users Profile'})%>
 <body>
   <%-include('partials/nav.ejs')%>
-  <div class="container-fluid">
+  <div class="container-fluid" style="margin-top:5rem;">
     <div class="row justify-content-center">
       <div class="col col-12 col-lg-8">
         <h1 class="text-center">Profile</h1>
         <div class="row">
           <div class="col col-12 col-sm-6">
-            <img src="https://placehold.co/600x600/orange/white?text=<%=users_name%>" alt="Profile Picture" class="w-100 h-100" style="max-height: 40vh" />
+            <img src="https://placehold.co/300x300/orange/white?text=<%=users_name%>" alt="Profile Picture" class="w-100 h-100" style="max-height: 40vh" />
           </div>
           <div class="col col-12 col-sm-6">
             <div class="container">
@@ -49,7 +49,7 @@
           <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
             
             <button class="btn p-0" name="id" href="/description" value="<%=movie.id%>">
-            <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="Title" class="w-100" />
+            <img src="https://image.tmdb.org/t/p/w92<%=movie.poster_path%>" alt="Title" class="w-100" />
           </button>
         </form>
       <%}%>
@@ -63,7 +63,7 @@
           <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
             
             <button class="btn p-0" name="id" href="/description" value="<%=movie.id%>">
-            <img src="https://image.tmdb.org/t/p/w500<%=movie.poster_path%>" alt="Title" class="w-100" />
+            <img src="https://image.tmdb.org/t/p/w92<%=movie.poster_path%>" alt="Title" class="w-100" />
           </button>
         </form>
       <%}%>
