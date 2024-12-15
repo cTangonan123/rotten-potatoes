@@ -4,6 +4,7 @@
 - [x] fix login and create new account, convert to client-side js handling validation
 - [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~
 - [ ] create an about page
+- [ ] chartjs for vote_average of movies on [movieDescription view](/views/movieDescription.ejs)
 - [ ] alter footer after about page is created
   - 3 sections: About Page Link | github repo Link | attribute to TMDB
 - [ ] on searchResults page, either induce infinitescroll, or pages to the api call
