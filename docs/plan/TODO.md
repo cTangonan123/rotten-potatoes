@@ -1,15 +1,24 @@
 # TODO List:
 ## Priority List
+- [ ] replace alerts with toasts
+- [x] fix login and create new account, convert to client-side js handling validation
+- [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~
+- [ ] create an about page
+- [ ] alter footer after about page is created
+  - 3 sections: About Page Link | github repo Link | attribute to TMDB
+- [ ] on searchResults page, either induce infinitescroll, or pages to the api call
+  - ensure passing of `page` value of 1 at initial /search call increment thereafter
+- [ ] include genres search by popularity
+
 - [x] `grep -irl` minimizing all `.poster_path` image sizes and `.backdrop_path` image sizes
 - [x] minimize all place holder images
-- [ ] change any poster or backdrop to render client-side
+- [ ] change any poster or backdrop to render client-side 
   - [recommended Movies Section in movieDescription.ejs](/views/movieDescription.ejs?plain=1#L64)
   - [Compare Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L46)
   - [Users Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L60)
 - [x] look up express documentation and properly implement
 - [x] use popovers on hover displaying key information of movie/user, [refererence to trigger popover](https://getbootstrap.com/docs/5.3/components/popovers/#disabled-elements)
   - apply to [recommended Movies Section in movieDescription.ejs](/views/movieDescription.ejs?plain=1#L64)
-- [x] replace alerts with toasts
 
 ### example for popover trigger
 ```js
