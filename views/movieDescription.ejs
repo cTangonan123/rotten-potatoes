@@ -66,9 +66,11 @@
                     <div class="row justify-content-center">
                     <%for (recommendation of recommendations) {%>
                         <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
-                            <button class="btn p-0" name="id" href="/description" value=<%=recommendation.id%>>
-                                <img src="https://image.tmdb.org/t/p/w92<%=recommendation.poster_path%>" alt="Title" class="w-100" />
-                            </button>
+                            <div class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-title="<%=recommendation.title%>" data-bs-content="<%=recommendation.overview%>" data-bs-placement="top">
+                                <button class="btn p-0" name="id" href="/description" value="<%=recommendation.id%>">
+                                    <img src="https://image.tmdb.org/t/p/w92<%=recommendation.poster_path%>" alt="Title" class="w-100" />
+                                </button>
+                            </div>
                         </form>
                     <%}%>
                     </div>
@@ -143,6 +145,11 @@
         <script src="/js/addToWatchList.js"></script>
         <script src="/js/removeFromWatchList.js"></script>
         <script src="/js/updateReviewModal.js"></script>
+        <script>
+            const popoverTriggerList = document.querySelectorAll('[data-bs-toggle="popover"]')
+            const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
+
+        </script>
 
 
         <!-- Sidebar -->

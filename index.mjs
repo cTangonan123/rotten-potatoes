@@ -1,8 +1,14 @@
 import express from 'express';                    // Import express module
 import 'dotenv/config';                           // Import dotenv module
 import mysql from 'mysql2/promise';               // Import mysql module
-import bcrypt from 'bcrypt';                       // Import bcrypt module
-import session from 'express-session';             // Import express-session module
+import bcrypt from 'bcrypt';                      // Import bcrypt module
+import session from 'express-session';            // Import express-session module
+import MySQLStore from 'express-mysql-session';   // Import express-mysql-session module
+// import statusMonitor from 'express-status-monitor'; // Import express-status-monitor module
+
+
+
+
 
 // would need to install these packages if using redis
 // import {RedisStore} from "connect-redis"   
@@ -18,20 +24,14 @@ app.use(express.static('public'));                // Serve static files from the
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 app.use(express.json());                          // Parse JSON bodies
 
-/* Session Configuration */
-var sess = {
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: true,
-  cookie: {}
-}
+// in order to use statusMonitor, must run npm install express-status-monitor first in the terminal
+// app.use(statusMonitor());                         // Use express-status-monitor to monitor the server, uncomment and uncomment import relevant import statement above
 
-if (app.get('env') === 'production') {
-  app.set('trust proxy', 1) // trust first proxy
-  sess.cookie.secure = true // serve secure cookies
-}
 
-app.use(session(sess))
+
+
+
+
 
 
 /* Redis Session Storage */
@@ -64,7 +64,24 @@ const pool = mysql.createPool({
   database : process.env.DB_NAME,
   connectionLimit: 10,
   waitForConnections: true
+  
 });
+
+/* Session Configuration */
+// const sessionStore = new MySQLStore({}, pool);
+var sess = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {}
+}
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
+
+app.use(session(sess))
 
 const conn = await pool.getConnection();
 
@@ -171,6 +188,7 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
   // console.log(rows);
 
   res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed, watchers, recommendations: dataRecommendations.results });
+  
 });
 
 // Handles rendering of the userProfile view
@@ -201,7 +219,7 @@ app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchList
   let users_id = req.query.id;
   let users_name = req.query.username;
   let sqlWatched = `
-    SELECT m.id, m.title, m.poster_path
+    SELECT m.id, m.title, m.poster_path, m.overview
     FROM watchlist w
     LEFT JOIN movie m
     ON w.movie_id = m.id
@@ -223,7 +241,7 @@ app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchList
       JOIN user2 u2
       ON u1.movie_id = u2.movie_id
     )
-    SELECT m.id, m.title, m.poster_path
+    SELECT m.id, m.title, m.poster_path, m.overview
     FROM common c
     LEFT JOIN movie m
     ON c.movie_id = m.id;
