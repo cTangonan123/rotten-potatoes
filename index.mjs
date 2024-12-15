@@ -391,7 +391,7 @@ app.post('/login', async (req, res) => {
   const [rows] = await conn.query(sql, [user_name]);
 
   if (rows.length === 0) {
-    res.render('login', { message: 'Invalid username or password' });
+    res.json({ message: 'username does not exist in our records' });
     return;
   }
 
@@ -408,7 +408,8 @@ app.post('/login', async (req, res) => {
     req.session.authenticated = true;
     res.redirect('/search');
   } else {
-    res.render('login', { message: 'Invalid username or password' });
+    res.json({ message: 'password does not match' });
+    
   }
 });
 
