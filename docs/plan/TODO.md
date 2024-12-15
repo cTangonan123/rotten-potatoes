@@ -7,7 +7,24 @@
   - [Compare Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L46)
   - [Users Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L60)
 - [x] look up express documentation and properly implement
+- [x] use popovers on hover displaying key information of movie/user, [refererence to trigger popover](https://getbootstrap.com/docs/5.3/components/popovers/#disabled-elements)
+  - apply to [recommended Movies Section in movieDescription.ejs](/views/movieDescription.ejs?plain=1#L64)
+- [x] replace alerts with toasts
 
+### example for popover trigger
+```js
+// for hovering over something, evnets 'mouseover' and 'mouseout' must be used
+// consider to use popover compontent from bootstrap to display
+// movie information when hovering over movie poste, client-side render 
+/* Example of structure to trigger popover */
+document.querySelector("#rBtnClose").addEventListener('mouseover', e => {
+  let temp = e.currentTarget.style.backgroundColor
+  e.currentTarget.style.backgroundColor = "red"
+  e.currentTarget.addEventListener('mouseout', e => {
+    e.currentTarget.style.backgroundColor = temp
+  })
+})
+```
 
 
 
