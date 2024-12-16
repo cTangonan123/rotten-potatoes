@@ -4,7 +4,6 @@
 - [ ] alter footer after about page is created
   - 3 sections: About Page Link | github repo Link | attribute to TMDB
 
-
 - [ ] ~~replace alerts with toasts~~
 - [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~
 - [x] include genres search by popularity
