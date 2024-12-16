@@ -3,7 +3,7 @@
 - [ ] create an about page
 - [ ] alter footer after about page is created
   - 3 sections: About Page Link | github repo Link | attribute to TMDB
-
+- [ ] add a genreResults view and swap its routes from searchResults
 
 - [ ] ~~replace alerts with toasts~~
 - [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~

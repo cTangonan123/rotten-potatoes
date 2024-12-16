@@ -1,0 +1,155 @@
+<%- include('partials/header.ejs', { "pageTitle":'Search Results' }) %>
+
+<body>
+  
+  <%- include("partials/nav.ejs") %>
+  <div class="container" style="margin-top:5rem; margin-bottom: 5rem">
+    <div class="row align-items-center mx-4 mt-4">  
+      <h2 class="mt-4 col-8"><span>Popular for Genre:</span> <%=genre%></h2>
+      <div class="col col-4 mt-4 align-self-center text-end pe-5">
+        <nav aria-label="Page navigation">
+          <ul class="pagination justify-content-end mt-2">
+            <% if (currentPage > 1) { %>
+              
+              <li class="page-item">
+                <a class="page-link" href="?currentPage=<%= currentPage - 1 %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
+                </a>
+              </li>
+            <% } %>
+            <% for (let i = 1; i <= totalPages && Math.floor(); i++) { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre"><%= i %></a>
+                </li>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+              <% if (searchType === "movie") { %>
+                <li class="page-item">
+                  <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              <%} else {%>
+                <li class="page-item">
+                  <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              <%} %>
+            <% } %>
+          </ul>
+        </nav>
+      </div>
+      <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        <% for (show of shows) { %>
+          <div class="col">
+            <div class="card h-100">
+              <form action="/description">
+                <button class="btn p-0" name="id" href="/description" value=<%=show.id%>>
+                  <div class="more-info bg-black rounded-pill px-3 py-1">More Info</div>
+                  <%if (show.backdrop_path) {%>
+                    <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://image.tmdb.org/t/p/w300<%=show.backdrop_path%>" alt="image from <%=show.title%>">
+
+                  <%} else {%>
+                    <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://placehold.co/300x150/orange/white?text=<%=show.title.replace(/ /g, '%20')%>" alt="image from <%=show.title%>">
+                  <%}%>
+                </button>
+              </form>
+              <div class="card-body">
+                <h5 class="card-title text-truncate"><%=show.title%></h5>
+                <p class="card-text d-block w-100 overflow-auto w-100 resultMovieOverview" style="height:10rem"><%=show.overview%></p>
+                <div class="container-fluid">
+                  <div class="row justify-content-between align-items-end">
+                    <div class="col col-6">
+                      <%if (watched.has(show.id)) {%>
+                        <a
+                          name="removeFromWatchList"
+                          id="removeFromWatchList"
+                          class="btn w-100 write-review-btn px-1 mx-0"
+                          href="#"
+                          role="button"
+                          data-movie-id=<%=show.id%>>
+                          <i class="bi bi-check"></i>
+                          Watched
+                        </a>
+                      <%} else {%>
+                      <a
+                        name="addToWatchList"
+                        id="addToWatchList"
+                        class="btn w-100 write-review-btn px-1 mx-0"
+                        href="#"
+                        role="button"
+                        data-movie-id=<%=show.id%>>
+                        <i class="bi bi-bookmark-plus-fill"></i>
+                        Watchlist
+                        </a>
+                      <%}%>
+                      
+                    </div>
+                    <div class="col col-6">
+                      <% if (reviewed.has(show.id)) {%>
+                        <a
+                          name=""
+                          id="btnReviewUpdate"
+                          class="btn w-100 write-review-btn px-1 mx-0"
+                          href="#"
+                          role="button"
+                          data-movie-id="<%=show.id%>"
+                          data-review-id="<%=reviewed.get(show.id)%>"
+                          >
+                          <i class="bi bi-check"></i>
+                          Reviewed
+                        </a>
+                      <%} else {%>
+                        <a
+                          name=""
+                          id="writeReview"
+                          class="btn w-100 write-review-btn"
+                          href="#"
+                          role="button"
+                          data-movie-id=<%=show.id%>
+                          >
+                          <i class="bi bi-file-earmark-text"></i>
+                          Review
+                          </a
+                        >
+                      <%}%>
+                      
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        <% } %>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <%- include("partials/reviewModal.ejs") %>
+  <script src="/js/addToWatchList.js"></script>
+  <script src="/js/removeFromWatchList.js"></script>
+  <script src="/js/updateReviewModal.js"></script>
+
+  <!-- Sidebar -->
+  <%- include("partials/sidebarWatchlist.ejs") %>
+
+  <!-- Toast -->
+  <!-- <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header" id="toastHeader">
+        <img width="30" height="30" src="https://img.icons8.com/laces/64/potato.png" alt="potato" style="filter: invert(1);"/>
+        <strong class="me-auto"> Bootstrap</strong>
+        <small>11 mins ago</small>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body" id="toastMessage">
+        Hello, world! This is a toast message.
+      </div>
+    </div>
+  </div> -->
+  
+
+  <%- include("partials/footer.ejs") %>
