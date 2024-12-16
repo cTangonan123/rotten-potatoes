@@ -1,16 +1,16 @@
 # TODO List:
 ## Priority List
-- [ ] replace alerts with toasts
-- [x] fix login and create new account, convert to client-side js handling validation
-- [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~
 - [ ] create an about page
-- [ ] chartjs for vote_average of movies on [movieDescription view](/views/movieDescription.ejs)
 - [ ] alter footer after about page is created
   - 3 sections: About Page Link | github repo Link | attribute to TMDB
-- [ ] on searchResults page, either induce infinitescroll, or pages to the api call
-  - ensure passing of `page` value of 1 at initial /search call increment thereafter
 - [ ] include genres search by popularity
 
+- [ ] ~~replace alerts with toasts~~
+- [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~
+- [x] on searchResults page, either induce infinitescroll, or pages to the api call
+  - ensure passing of `page` value of 1 at initial /search call increment thereafter
+- [x] fix login and create new account, convert to client-side js handling validation
+- [x] chartjs for vote_average of movies on [movieDescription view](/views/movieDescription.ejs)
 - [x] `grep -irl` minimizing all `.poster_path` image sizes and `.backdrop_path` image sizes
 - [x] minimize all place holder images
 - [ ] change any poster or backdrop to render client-side 
