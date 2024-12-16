@@ -21,7 +21,12 @@
                                 <div class="col col-4 text-end">Genres:</div>
                                 <div class="col col-8">
                                     <%for (genre of show.genres) {%>
-                                        <span class="badge bg-secondary" data-genre-id="<%=genre.id%>"><%=genre.name%></span>
+                                        <form action="/search/results" class="d-inline-block">
+                                            <input type="hidden" name="currentPage" value="1">
+                                            <input type="hidden" name="searchType" value="genre">
+                                            <input type="hidden" name="genre" value="<%=genre.name%>">
+                                            <button type="submit" class="btn rounded-5 btn-secondary py-0" name="searchQuery" style="font-size:.75rem" value="<%=genre.id%>"><%=genre.name%></button>
+                                        </form>
                                     <%}%>
                                 </div>
                             </div>
@@ -100,7 +105,7 @@
 
         <hr>
             <h3 class="text-center">Recommendations</h3>
-                <div class="container" style="width: 100vw">
+                <div class="container mb-4" style="width: 100vw">
                     <div class="row justify-content-center">
                     <%for (recommendation of recommendations) {%>
                         <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
@@ -113,6 +118,7 @@
                     <%}%>
                     </div>
                 </div>
+        <% if (watchers.length > 0) {%>
         <hr>
             <h3 class="text-center">User's Who've Also Watched <em><%=show.title%></em></h3>
                 <div class="container" style="width: 100vw">
@@ -129,9 +135,9 @@
                     <%}%>
                     </div>
                 </div>
-
+        <%}%>
+        <% if (reviews.length >0) {%>
         <hr>
-
         <div class="container-fluid">
             <h3 class="text-center">Reviews</h3>
             <%for (review of reviews) {%>
@@ -177,6 +183,7 @@
             <% } %>
             
         </div>
+        <%}%>
 
         <!-- Modal -->
         <%- include("partials/reviewModal.ejs") %>

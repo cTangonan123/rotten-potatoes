@@ -4,30 +4,56 @@
   
   <%- include("partials/nav.ejs") %>
 
-  <div class="container" style="margin-top:5rem;">
+  <div class="container" style="margin-top:5rem; margin-bottom: 5rem">
     <div class="row align-items-center mx-4 mt-4">
-      <h2 class="mt-4 col-8"><span>Results for:</span> <%=searchQuery%></h2>
+      <%if (searchType === "movie") {%>
+      <h2 class="mt-4 col-8"><span>Results for Search:</span> "<%=searchQuery%>"</h2>
+      <%} else {%>
+      <h2 class="mt-4 col-8"><span>Popular for Genre:</span> <%=genre%></h2>
+      <%}%>
       <div class="col col-4 mt-4 align-self-center text-end pe-5">
         <nav aria-label="Page navigation">
           <ul class="pagination justify-content-end mt-2">
             <% if (currentPage > 1) { %>
+              <% if (searchType === "movie") { %>
               <li class="page-item">
-                <a class="page-link" href="?currentPage=<%= currentPage - 1 %>&searchQuery=<%= searchQuery %>" aria-label="Previous">
+                <a class="page-link" href="?currentPage=<%= currentPage - 1 %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
-            <% } %>
-            <% for (let i = 1; i <= totalPages; i++) { %>
-              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>"><%= i %></a>
-              </li>
-            <% } %>
-            <% if (currentPage < totalPages) { %>
+              <%} else {%>
               <li class="page-item">
-                <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>" aria-label="Next">
-                  <span aria-hidden="true">&raquo;</span>
+                <a class="page-link" href="?currentPage=<%= currentPage - 1 %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Previous">
+                  <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
+              <%} %>
+            <% } %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
+              <% if (searchType === "movie") { %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie"><%= i %></a>
+                </li>
+              <%} else {%>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre"><%= i %></a>
+                </li>
+              <%} %>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+              <% if (searchType === "movie") { %>
+                <li class="page-item">
+                  <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              <%} else {%>
+                <li class="page-item">
+                  <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Next">
+                    <span aria-hidden="true">&raquo;</span>
+                  </a>
+                </li>
+              <%} %>
             <% } %>
           </ul>
         </nav>
