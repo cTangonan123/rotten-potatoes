@@ -1,4 +1,4 @@
-<%- include('partials/header.ejs', { "pageTitle":'Search Results' }) %>
+<%- include('partials/header.ejs', { "pageTitle":'Genre Results' }) %>
 
 <body>
   
@@ -10,32 +10,23 @@
         <nav aria-label="Page navigation">
           <ul class="pagination justify-content-end mt-2">
             <% if (currentPage > 1) { %>
-              
               <li class="page-item">
                 <a class="page-link" href="?currentPage=<%= currentPage - 1 %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
             <% } %>
-            <% for (let i = 1; i <= totalPages && Math.floor(); i++) { %>
+            <% for (let i = 1; i <= totalPages; i++) { %>
                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
                   <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre"><%= i %></a>
                 </li>
             <% } %>
             <% if (currentPage < totalPages) { %>
-              <% if (searchType === "movie") { %>
-                <li class="page-item">
-                  <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
-                  </a>
-                </li>
-              <%} else {%>
                 <li class="page-item">
                   <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Next">
                     <span aria-hidden="true">&raquo;</span>
                   </a>
                 </li>
-              <%} %>
             <% } %>
           </ul>
         </nav>

@@ -128,12 +128,46 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
 
   let watched = new Set(watchlist.map(movie => movie.movie_id));
   let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
-  let url;
-  if (searchType === 'movie') {
-    url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=${currentPage}`;
-  } else {
-    url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${currentPage}&sort_by=popularity.desc&with_genres=${searchQueryURL}`;
+  const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=${currentPage}`;
+  
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`
+    }
+  };
+
+  let response = await fetch(url, options);
+  let data = await response.json();
+  // console.log(data)
+  // take this out when applying logic to the front end
+  if (data.total_pages > 5) {
+    data.total_pages = 5;
   }
+
+  res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages, genre, searchType });
+});
+
+// Handles rendering of the searchResults view, once user submits a search query
+app.get('/genre/results', isAuthenticated, getWatchListForUser, getReviewsForUser, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let reviews = req.session.user_reviews;
+  
+  let searchQuery = req.query.searchQuery;
+  let currentPage = req.query.currentPage;
+  let searchType = req.query.searchType;
+  let genre = req.query.genre;
+  // console.log(currentPage)
+  let searchQueryURL = searchQuery.replace(/ /g, '%20');
+
+  let watched = new Set(watchlist.map(movie => movie.movie_id));
+  let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
+  const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${currentPage}&sort_by=popularity.desc&with_genres=${searchQueryURL}`;
+
   const options = {
     method: 'GET',
     headers: {
@@ -148,10 +182,8 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
   if (data.total_pages > 5) {
     data.total_pages = 5;
   }
-
   
-    
-  res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages, genre, searchType });
+  res.render('genreResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages, genre, searchType });
 });
 
 // Handles rendering of the movieDescription view, once user clicks on a specific movie
