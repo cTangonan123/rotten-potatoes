@@ -121,8 +121,9 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
 
   let watched = new Set(watchlist.map(movie => movie.movie_id));
   let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
+
   const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=${currentPage}`;
-  
+
   const options = {
     method: 'GET',
     headers: {
