@@ -21,7 +21,9 @@
                                 <div class="col col-4 text-end">Genres:</div>
                                 <div class="col col-8">
                                     <%for (genre of show.genres) {%>
+
                                         <form action="/genre/results" class="d-inline-block">
+
                                             <input type="hidden" name="currentPage" value="1">
                                             <input type="hidden" name="searchType" value="genre">
                                             <input type="hidden" name="genre" value="<%=genre.name%>">
