@@ -27,13 +27,6 @@ app.use(express.json());                          // Parse JSON bodies
 // in order to use statusMonitor, must run npm install express-status-monitor first in the terminal
 // app.use(statusMonitor());                         // Use express-status-monitor to monitor the server, uncomment and uncomment import relevant import statement above
 
-
-
-
-
-
-
-
 /* Redis Session Storage */
 // // Initialize client.
 // let redisClient = createClient()
@@ -178,7 +171,7 @@ app.get('/genre/results', isAuthenticated, getWatchListForUser, getReviewsForUse
 
   let response = await fetch(url, options);
   let data = await response.json();
-  // console.log(data)
+  // limited to 5 pages
   if (data.total_pages > 5) {
     data.total_pages = 5;
   }
