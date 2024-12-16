@@ -119,12 +119,14 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
   let watchlist = req.session.user_watchlist;
   let reviews = req.session.user_reviews;
   let searchQuery = req.query.searchQuery;
+  let currentPage = req.query.currentPage;
+  console.log(currentPage)
   let searchQueryURL = searchQuery.replace(/ /g, '%20');
 
   let watched = new Set(watchlist.map(movie => movie.movie_id));
   let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
 
-  const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=1`;
+  const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=${currentPage}`;
   const options = {
     method: 'GET',
     headers: {
@@ -135,10 +137,11 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
 
   let response = await fetch(url, options);
   let data = await response.json();
+  console.log(data)
 
   
     
-  res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed });
+  res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages });
 });
 
 // Handles rendering of the movieDescription view, once user clicks on a specific movie
