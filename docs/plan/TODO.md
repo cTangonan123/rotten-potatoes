@@ -6,6 +6,7 @@
 
 - [ ] ~~replace alerts with toasts~~
 - [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~
+- [x] add a genreResults view and swap its routes from searchResults
 - [x] include genres search by popularity
 - [x] on searchResults page, either induce infinitescroll, or pages to the api call
   - ensure passing of `page` value of 1 at initial /search call increment thereafter

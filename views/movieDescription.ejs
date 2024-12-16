@@ -21,7 +21,9 @@
                                 <div class="col col-4 text-end">Genres:</div>
                                 <div class="col col-8">
                                     <%for (genre of show.genres) {%>
-                                        <form action="/search/results" class="d-inline-block">
+
+                                        <form action="/genre/results" class="d-inline-block">
+
                                             <input type="hidden" name="currentPage" value="1">
                                             <input type="hidden" name="searchType" value="genre">
                                             <input type="hidden" name="genre" value="<%=genre.name%>">
@@ -34,7 +36,7 @@
                             <div class="row align-items-center mt-2">
                                 <div class="col col-4 text-end">Movie Page: </div>
                                 <div class="col col-8">
-                                    <a href="<%=show.homepage%>" class="btn btn-outline-secondary py-0 rounded-5" style="text-decoration:none" target="_blank"><%=show.title%> Official Site</a>
+                                    <a href="<%=show.homepage%>" class="btn btn-outline-quarterary py-0 rounded-5" style="text-decoration:none" target="_blank"><%=show.title%> Official Site</a>
                                 </div>
                             </div>
                             <% } %>
