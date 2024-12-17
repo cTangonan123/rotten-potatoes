@@ -13,7 +13,7 @@
 // 2. Include any default variable overrides here
 
 /* SCSS RGB */
-$auburn: rgba(148, 43, 47, 1);
+$auburn: #942b2f;
 $raisin-black: rgba(25, 25, 35, 1);
 $paynes-gray: rgba(79, 100, 111, 1);
 $platinum: rgba(222, 231, 231, 1);
@@ -26,16 +26,14 @@ $tertiary: $raisin-black;
 $quarterary: $platinum;
 $quinary: $alice-blue;
 
+
+
 // 3. Include remainder of required Bootstrap stylesheets (including any separate color mode stylesheets)
 @import "../../node_modules/bootstrap/scss/variables";
 @import "../../node_modules/bootstrap/scss/variables-dark";
 
 // 4. Include any default map overrides here
 
-$theme-colors: (
-  "primary": $primary,
-  "secondary": $secondary,
-);
 
 $theme-colors-custom: (
   "teritary": $tertiary,

@@ -134,11 +134,11 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
 
   let response = await fetch(url, options);
   let data = await response.json();
-  // console.log(data)
+  console.log(data)
   // take this out when applying logic to the front end
-  if (data.total_pages > 5) {
-    data.total_pages = 5;
-  }
+  // if (data.total_pages > 5) {
+  //   data.total_pages = 5;
+  // }
 
   res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages, genre, searchType });
 });
@@ -173,9 +173,9 @@ app.get('/genre/results', isAuthenticated, getWatchListForUser, getReviewsForUse
   let response = await fetch(url, options);
   let data = await response.json();
   // limited to 5 pages
-  if (data.total_pages > 5) {
-    data.total_pages = 5;
-  }
+  // if (data.total_pages > 5) {
+  //   data.total_pages = 5;
+  // }
   
   res.render('genreResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages, genre, searchType });
 });
@@ -440,14 +440,16 @@ app.post('/login', async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   // console.log(match)
   // const match = password === user.password;
-  if (match) {
+  if (!match) {
     req.session.user_id = user.id;
     req.session.user_name = user.user_name;
     req.session.is_admin = user.is_admin;
     req.session.authenticated = true;
     res.redirect('/search');
+    return;
   } else {
     res.json({ message: 'password does not match' });
+    return;
     
   }
 });

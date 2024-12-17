@@ -11,14 +11,21 @@ document.querySelector('#loginForm').addEventListener('submit', async(e) => {
   })
     .then(response => {
       if (!response.ok) throw new Error('Network response was not ok');
-      else if (response.redirected) document.location.href = response.url;
+      else if (response.redirected) {
+        document.location.href = response.url;
+      }
       else return response.json();
-    })
-    .then(data => {
-      document.querySelector(".alert").classList.remove('d-none')
-      document.querySelector(".alert").innerHTML = data.message
-      document.querySelector('#loginForm').reset()
-      // location.reload()
+    }).then(data => {
+      if (data.message) {
+        document.querySelector(".alert").classList.remove('d-none')
+        document.querySelector(".alert").innerHTML = data.message
+      }
+      else {
+        document.querySelector(".alert").classList.add('d-none')
+        document.querySelector(".alert").innerHTML = ''
+      }
+      // document.querySelector('#loginForm').reset()
+      
     })
     .catch((error) => {
       console.error('Error:', error);
