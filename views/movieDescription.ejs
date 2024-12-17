@@ -21,9 +21,7 @@
                                 <div class="col col-4 text-end">Genres:</div>
                                 <div class="col col-8">
                                     <%for (genre of show.genres) {%>
-
                                         <form action="/genre/results" class="d-inline-block">
-
                                             <input type="hidden" name="currentPage" value="1">
                                             <input type="hidden" name="searchType" value="genre">
                                             <input type="hidden" name="genre" value="<%=genre.name%>">
@@ -172,8 +170,11 @@
                                 <small class="text-muted">
                                     <form action="/getUsersProfile" class="p-0 m-0">
                                         <input type="hidden" name="username" value="<%=review.user_name%>">
-                                        <button class="btn p-0 m-0" name="id" value="<%=review.user_id%>">
-                                            By: <%=review.user_name%>
+                                        <button class="btn py-0 m-0" name="id" value="<%=review.user_id%>">
+                                            By: <span class="btn btn-outline-quarterary rounded-pill py-0">
+                                                <%=review.user_name%>
+
+                                            </span>
                                         </button>
                                     </form>
                                 </small>
@@ -218,14 +219,20 @@
                 options: {
                     cutout: '80%',
                     responsive: true,
-                    maintainAspectRatio: false,
+                    maintainAspectRatio: true,
                     plugins: {
                         legend: {
                             display: false
+                        },
+                        tooltip: {
+                            enabled: false
                         }
+                        
                     }
+
                 }
             });
+            
         </script>
 
 

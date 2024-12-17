@@ -11,24 +11,44 @@
       <div class="col col-4 mt-4 align-self-center text-end pe-5">
         <nav aria-label="Page navigation">
           <ul class="pagination justify-content-end mt-2">
-            <% if (currentPage > 1) { %>
+            <% currentPage = parseInt( currentPage ) %>
+            <% totalPages = parseInt( totalPages ) %>
+            <% let limit = 5 %>
+            <% let center = Math.ceil(limit/2) %>
+            <% if (currentPage > 1) { %> 
               <li class="page-item">
-                <a class="page-link" href="?currentPage=<%= currentPage - 1 %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Previous">
+                <a class="page-link text-quarterary" href="?currentPage=<%= parseInt(currentPage - 1) %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
             <% } %>
-            <% for (let i = 1; i <= totalPages; i++) { %>
+            <% if (currentPage < center) { %>
+              <% for (let i = 1; i <= limit; i++) { %>
                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                  <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie"><%= i %></a>
-                </li>
-            <% } %>
-            <% if (currentPage < totalPages) { %>
-                <li class="page-item">
-                  <a class="page-link" href="?currentPage=<%= currentPage + 1 %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Next">
-                    <span aria-hidden="true">&raquo;</span>
+                  <a class="page-link text-quarterary" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie">
+                    <%= i %>
                   </a>
                 </li>
+              <% } %>
+            <%} else if (totalPages - center + 1 > currentPage) { %>
+              <% for (let i = parseInt(currentPage - center + 1); i <= parseInt(currentPage+center-1); i++){ %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link text-quarterary" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie"><%= i %></a>
+                </li>
+              <% } %>
+            <% } else { %>
+              <% for (let i = parseInt(totalPages-limit+1); i <= totalPages; i++){ %>
+                <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                  <a class="page-link text-quarterary" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie"><%= i %></a>
+                </li>
+              <% } %>
+            <% } %>
+            <% if (currentPage < totalPages) { %>
+              <li class="page-item">
+                <a class="page-link text-quarterary" href="?currentPage=<%= parseInt(currentPage + 1) %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Next">
+                  <span aria-hidden="true">&raquo;</span>
+                </a>
+              </li>
             <% } %>
           </ul>
         </nav>
