@@ -2,6 +2,11 @@
   border-radius: 30px;
 }
 
+.custom-hover:hover {
+  translate: 0 -0.2em;
+  transition: 0.3s;
+}
+
 .bg-img {
   background-image: url(../img/cinema.jpg);
   background-repeat: no-repeat;
