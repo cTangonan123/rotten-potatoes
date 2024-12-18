@@ -2,7 +2,7 @@
 <body>
 <%- include('partials/nav.ejs') %>
 
-<div class="container-fluid position-relative">
+<div class="container-fluid position-relative" style="margin-top:5rem;">
   <div class="row justify-content-center align-items-center position-absolute" style="height:90vh;width:100vw">
     <div class="col-12 h-100 px-0">
       <img src="/img/cinema.jpg" alt="" class="object-fit-cover w-100"  style="height:100%;max-width:100vw;">
@@ -13,12 +13,12 @@
       <div class="card">
         <div class="card-body">
           <h5 class="card-title">Login</h5>
-          <% if (typeof message !== 'undefined') { %>
-            <div class="alert alert-danger" role="alert">
-              <%= message %>
+          
+            <div class="alert alert-danger d-none" role="alert">
+              Invalid username or password
             </div>
-          <% } %>
-          <form action="/login" method="POST">
+          
+          <form action="/login" method="POST" id="loginForm">
             <div class="mb-3">
               <label for="user_name" class="form-label">Username</label>
               <input type="text" class="form-control" id="user_name" name="user_name" required>
@@ -28,10 +28,10 @@
               <input type="password" class="form-control" id="password" name="password" required>
             </div>
             <div class="text-center mb-4">
-              Don't have an account? <a href="/createNewAccount" style="text-decoration: none">Sign up</a>
+              Don't have an account? <a href="/createNewAccount" class="text-quinary">Sign up</a>
             </div>
             <div class="col text-center">
-              <button type="submit" class="btn btn-primary">Login</button>
+              <button type="submit" class="btn write-review-btn">Login</button>
             </div>
           </form>
         </div>
@@ -40,3 +40,4 @@
   </div>
 </div>
 <%- include("partials/footer.ejs") %>
+<script src="/js/loginValidation.js"></script>

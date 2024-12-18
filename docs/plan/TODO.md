@@ -1,24 +1,41 @@
 # TODO List:
 ## Priority List
-- [x] Search page view by @Ranjita and @ChrisTangonan
-- [x] Search page routing by @ChrisTangonan
-- [x] Create New User view by @Arielle
-- [x] Create New User routing by @Arielle
-- [x] implement `sessions` and `bcrypt` into project for Logging In by @ChrisTangonan and @Vex
-- [ ] admin section to EditUsers and addMovie
-  - [x] editUser view Routing by @Vex
-  - [ ] editUser view Frontend by @Vex
-  - [ ] addUser view Routing
-  - [ ] addUser view Frontend
-- [ ] **in order to meet the 3 form elements criteria on rubric:**
-  - [ ] convert rating on review form from number to dropdown *assigned to: @ChrisTangonan*
-    - [ ] routing
-    - [ ] frontend
-### Not Necessary
-- [ ] `/views/userProfile.ejs`: add route to movieDescription.ejs onClick of poster image in Manage Reviews section
-- [ ] `/views/partials/sidebarWatchList.ejs`: add `delete` button per movie of watchlist on partial view
-- [ ] `index.mjs`: variable migration in middleware and main requests from `req.body.{variable-name}` to `req.session.{variable-name}`
+- [ ] create an about page
+- [ ] alter footer after about page is created
+  - 3 sections: About Page Link | github repo Link | attribute to TMDB
 
+- [ ] ~~replace alerts with toasts~~
+- [ ] ~~convert adding to watchlist and adding to review to be dynamically alter button instead of reloading // too dependent on the load cannot think of a way without interfering~~
+- [x] add a genreResults view and swap its routes from searchResults
+- [x] include genres search by popularity
+- [x] on searchResults page, either induce infinitescroll, or pages to the api call
+  - ensure passing of `page` value of 1 at initial /search call increment thereafter
+- [x] fix login and create new account, convert to client-side js handling validation
+- [x] chartjs for vote_average of movies on [movieDescription view](/views/movieDescription.ejs)
+- [x] `grep -irl` minimizing all `.poster_path` image sizes and `.backdrop_path` image sizes
+- [x] minimize all place holder images
+- [ ] change any poster or backdrop to render client-side 
+  - [recommended Movies Section in movieDescription.ejs](/views/movieDescription.ejs?plain=1#L64)
+  - [Compare Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L46)
+  - [Users Watchlist Section in userSocialProfile.ejs](/views/userSocialProfile.ejs?plain=1#L60)
+- [x] look up express documentation and properly implement
+- [x] use popovers on hover displaying key information of movie/user, [refererence to trigger popover](https://getbootstrap.com/docs/5.3/components/popovers/#disabled-elements)
+  - apply to [recommended Movies Section in movieDescription.ejs](/views/movieDescription.ejs?plain=1#L64)
+
+### example for popover trigger
+```js
+// for hovering over something, evnets 'mouseover' and 'mouseout' must be used
+// consider to use popover compontent from bootstrap to display
+// movie information when hovering over movie poste, client-side render 
+/* Example of structure to trigger popover */
+document.querySelector("#rBtnClose").addEventListener('mouseover', e => {
+  let temp = e.currentTarget.style.backgroundColor
+  e.currentTarget.style.backgroundColor = "red"
+  e.currentTarget.addEventListener('mouseout', e => {
+    e.currentTarget.style.backgroundColor = temp
+  })
+})
+```
 
 
 
@@ -56,7 +73,7 @@ Due by Saturday 11/30/2024
   - [x] State Diagrams by @cTangonan123
   - [ ] ~~UI Diagrams by @alexcbensen~~
 
-
+  - 
 
 <sub>\< [Back to Docs](/docs/README.md)</sub>
 <sub>\<\< [Back to Main Page](/README.md)</sub>

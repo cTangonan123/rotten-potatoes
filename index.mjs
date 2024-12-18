@@ -1,8 +1,18 @@
 import express from 'express';                    // Import express module
 import 'dotenv/config';                           // Import dotenv module
 import mysql from 'mysql2/promise';               // Import mysql module
-import bcrypt from 'bcrypt';                       // Import bcrypt module
-import session from 'express-session';             // Import express-session module
+import bcrypt from 'bcrypt';                      // Import bcrypt module
+import session from 'express-session';            // Import express-session module
+import MySQLStore from 'express-mysql-session';   // Import express-mysql-session module
+// import statusMonitor from 'express-status-monitor'; // Import express-status-monitor module
+
+
+
+
+
+// would need to install these packages if using redis
+// import {RedisStore} from "connect-redis"   
+// import {createClient} from "redis"
 
 const app = express();
 
@@ -14,14 +24,30 @@ app.use(express.static('public'));                // Serve static files from the
 app.use(express.urlencoded({ extended: true }));  // Parse URL-encoded bodies
 app.use(express.json());                          // Parse JSON bodies
 
-// setting up session
-app.set('trust proxy', 1); 
-app.use(session({
-  secret: 'keyboard cat',
-  resave: false,
-  saveUninitialized: true
-  
-}))
+// in order to use statusMonitor, must run npm install express-status-monitor first in the terminal
+// app.use(statusMonitor());                         // Use express-status-monitor to monitor the server, uncomment and uncomment import relevant import statement above
+
+/* Redis Session Storage */
+// // Initialize client.
+// let redisClient = createClient()
+// redisClient.connect().catch(console.error)
+
+// // Initialize store.
+// let redisStore = new RedisStore({
+//   client: redisClient,
+//   prefix: "myapp:",
+// })
+
+// // Initialize session storage.
+// app.use(
+//   session({
+//     store: redisStore,
+//     resave: false, // required: force lightweight session keep alive (touch)
+//     saveUninitialized: false, // recommended: only save session when data exists
+//     secret: process.env.SESSION_SECRET,
+//   }),
+// )
+
 
 // Setup MySQL connection
 const pool = mysql.createPool({                   
@@ -31,7 +57,24 @@ const pool = mysql.createPool({
   database : process.env.DB_NAME,
   connectionLimit: 10,
   waitForConnections: true
+  
 });
+
+/* Session Configuration */
+// const sessionStore = new MySQLStore({}, pool);
+var sess = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: true,
+  cookie: {}
+}
+
+if (app.get('env') === 'production') {
+  app.set('trust proxy', 1) // trust first proxy
+  sess.cookie.secure = true // serve secure cookies
+}
+
+app.use(session(sess))
 
 const conn = await pool.getConnection();
 
@@ -41,13 +84,12 @@ const conn = await pool.getConnection();
 
 // Handles rendering of the login view
 app.get('/', async (req, res) => {
-  // let sql = 'SELECT * FROM user';
-  // const [rows] = await conn.execute(sql);         
-  // for (let row of rows) {
-  //   console.log(row);                             
-  // }
-  // res.render('index', {"greeting": "Hello, World!", "port": process.env.PORT});, res) => {
-  res.render('login');
+  if (req.session.authenticated) {
+    res.redirect('/search');
+  } else {
+    res.render('login');
+  }
+  
 });
 
 
@@ -69,24 +111,19 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
   let is_admin = req.session.is_admin;
   let watchlist = req.session.user_watchlist;
   let reviews = req.session.user_reviews;
+  
   let searchQuery = req.query.searchQuery;
+  let currentPage = req.query.currentPage;
+  let searchType = req.query.searchType;
+  let genre = req.query.genre;
+  // console.log(currentPage)
   let searchQueryURL = searchQuery.replace(/ /g, '%20');
 
   let watched = new Set(watchlist.map(movie => movie.movie_id));
   let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
 
+  const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=${currentPage}`;
 
-  // https://api.themoviedb.org/3/search/movie?query=${searchQuery}&include_adult=false&language=en-US&page=1
-
-  // console.log("this is the user id: " + user_id) // for testing
-  // console.log("this is the watchlist:*********")
-  // for (let movie of watchlist) {
-  //   console.log(movie)
-  // }
-
-  // let user_id = 2;
-  // const url = 'https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=1&sort_by=popularity.desc';
-  const url = `https://api.themoviedb.org/3/search/movie?query=${searchQueryURL}&include_adult=false&language=en-US&page=1`;
   const options = {
     method: 'GET',
     headers: {
@@ -97,10 +134,50 @@ app.get('/search/results', isAuthenticated, getWatchListForUser, getReviewsForUs
 
   let response = await fetch(url, options);
   let data = await response.json();
+  console.log(data)
+  // take this out when applying logic to the front end
+  // if (data.total_pages > 5) {
+  //   data.total_pages = 5;
+  // }
 
+  res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages, genre, searchType });
+});
+
+// Handles rendering of the searchResults view, once user submits a search query
+app.get('/genre/results', isAuthenticated, getWatchListForUser, getReviewsForUser, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let reviews = req.session.user_reviews;
   
-    
-  res.render('searchResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed });
+  let searchQuery = req.query.searchQuery;
+  let currentPage = req.query.currentPage;
+  let searchType = req.query.searchType;
+  let genre = req.query.genre;
+  // console.log(currentPage)
+  let searchQueryURL = searchQuery.replace(/ /g, '%20');
+
+  let watched = new Set(watchlist.map(movie => movie.movie_id));
+  let reviewed = new Map(reviews.map(review => [review.movie_id, review.id]));
+  const url = `https://api.themoviedb.org/3/discover/movie?include_adult=false&include_video=false&language=en-US&page=${currentPage}&sort_by=popularity.desc&with_genres=${searchQueryURL}`;
+
+  const options = {
+    method: 'GET',
+    headers: {
+      accept: 'application/json',
+      Authorization: `Bearer ${process.env.TMDB_READ_ACCESS_TOKEN}`
+    }
+  };
+
+  let response = await fetch(url, options);
+  let data = await response.json();
+  // limited to 5 pages
+  // if (data.total_pages > 5) {
+  //   data.total_pages = 5;
+  // }
+  
+  res.render('genreResults', { "shows": data.results, user_id, user_name, is_admin, watchlist, watched, reviewed, searchQuery, currentPage, totalPages: data.total_pages, genre, searchType });
 });
 
 // Handles rendering of the movieDescription view, once user clicks on a specific movie
@@ -127,7 +204,7 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
 
   let response = await fetch(url, options);
   let data = await response.json();
-  console.log(data);
+  // console.log(data);
 
   const urlRecommendations = `https://api.themoviedb.org/3/movie/${movie_id}/recommendations?language=en-US&page=1`;
   const optionsRecommendations = {
@@ -147,9 +224,10 @@ app.get('/description', isAuthenticated, getWatchListForUser, getReviewsForUser,
            LEFT JOIN user u ON r.user_id = u.id
     WHERE movie_id = ?`;
   const [rows] = await conn.query(sql, [movie_id]);
-  console.log(rows);
+  // console.log(rows);
 
   res.render('movieDescription', { "show": data, "reviews": rows, user_id, user_name, is_admin, watchlist, watched, reviewed, watchers, recommendations: dataRecommendations.results });
+  
 });
 
 // Handles rendering of the userProfile view
@@ -180,7 +258,7 @@ app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchList
   let users_id = req.query.id;
   let users_name = req.query.username;
   let sqlWatched = `
-    SELECT m.id, m.title, m.poster_path
+    SELECT m.id, m.title, m.poster_path, m.overview
     FROM watchlist w
     LEFT JOIN movie m
     ON w.movie_id = m.id
@@ -202,7 +280,7 @@ app.get('/getUsersProfile', isAuthenticated, getUserId, checkAdmin, getWatchList
       JOIN user2 u2
       ON u1.movie_id = u2.movie_id
     )
-    SELECT m.id, m.title, m.poster_path
+    SELECT m.id, m.title, m.poster_path, m.overview
     FROM common c
     LEFT JOIN movie m
     ON c.movie_id = m.id;
@@ -232,7 +310,7 @@ app.get('/messages', isAuthenticated, getWatchListForUser, getMessagesForUser, a
   let is_admin = req.session.is_admin;
   let watchlist = req.session.user_watchlist;
   let messages = req.session.messages;
-  console.log(messages);
+  // console.log(messages);
 
   res.render('userMessages', { user_id, user_name, is_admin, watchlist, messages });
 })
@@ -260,7 +338,7 @@ app.get('/getReview/:id', async (req, res) => {
     FROM reviews 
     WHERE id = ?`;
   const [rows] = await conn.query(sql, [review_id]);
-  console.log(rows[0]);
+  // console.log(rows[0]);
   res.json(rows[0]);
 });
 
@@ -272,7 +350,7 @@ app.get('/api/getUsers/:id', async (req, res) => {
     FROM user 
     WHERE id = ?`;
   const [rows] = await conn.query(sql, [review_id]);
-  console.log(rows[0]);
+  // console.log(rows[0]);
   res.json(rows[0]);
 });
 
@@ -289,7 +367,7 @@ app.get('/api/usernameAvailable/:username', async (req, res) => {
   //   FROM user
   //   WHERE user_name = ?)`;
   const [rows] = await conn.query(sql, [username]);
-  console.log(rows[0]);
+  // console.log(rows[0]);
   if (rows.length === 0) {
     res.json({"available": true});
   } else {
@@ -310,9 +388,6 @@ app.get('/addUser', isAuthenticated, checkAdmin, async (req, res) => {
 
   res.render('addUser', { user_id, user_name, is_admin });
 });
-
-
-
 
 /* POST Requests */
 // Handles the creation of a new account
@@ -355,15 +430,15 @@ app.post('/login', async (req, res) => {
   const [rows] = await conn.query(sql, [user_name]);
 
   if (rows.length === 0) {
-    res.render('login', { message: 'Invalid username or password' });
+    res.json({ message: 'username does not exist in our records' });
     return;
   }
 
   const user = rows[0];
-  console.log(user.password)
+  // console.log(user.password)
 
   const match = await bcrypt.compare(password, user.password);
-  console.log(match)
+  // console.log(match)
   // const match = password === user.password;
   if (match) {
     req.session.user_id = user.id;
@@ -371,8 +446,11 @@ app.post('/login', async (req, res) => {
     req.session.is_admin = user.is_admin;
     req.session.authenticated = true;
     res.redirect('/search');
+    return;
   } else {
-    res.render('login', { message: 'Invalid username or password' });
+    res.json({ message: 'password does not match' });
+    return;
+    
   }
 });
 
@@ -417,7 +495,7 @@ app.post('/addToWatchList', getUserId, async (req, res) => {
   let result = await fetch(url, options)
     .then(res => res.json())
     .then(data => {
-      console.log(data);
+      // console.log(data);
       return data;
       
     }) 
@@ -478,7 +556,7 @@ app.post('/submitReview', getUserId, async (req, res) => {
     let result = await fetch(url, options)
       .then(res => res.json())
       .then(data => {
-        console.log(data);
+        // console.log(data);
         return data;
         
       }) // where to do stuff

@@ -3,19 +3,62 @@
 <body>
     <%- include("partials/nav.ejs") %>
 
-        <div class="container">
+        <div class="container-fluid" style="margin-top:5rem;">
             <div class="row justify-content-center">
-                <img class="custom-img col-3 my-4" src="https://image.tmdb.org/t/p/w500<%=show.poster_path%>"
+                <img class="col col-12 col-md-8 custom-img my-4" src="https://image.tmdb.org/t/p/w342<%=show.poster_path%>"
                     alt="image from <%=show.title%>">
-                <div class="col-5 my-4">
-                    <h1>
-                        <%=show.title%>
-                    </h1>
+                <div class="col-12 col-md-6 my-4">
+                    
                     <div class="row">
-                        <div class="pe-3 col-lg-8">Release Date: <%=show.release_date%></div> <div class="col-lg-4">Vote Avg: <%=show.vote_average%></div>
+                        <div class="container align-items-center">
+                            <div class="row">
+                                <div class="col col-12 ms-auto text-center"><h1><%=show.title%></h1></div>
+                            <div class="row">
+                                <div class="col col-4 text-end">Release Date:</div><div class="col col-8"><%=new Date(show.release_date).toDateString()%></div>
+                            </div>
+                            <div class="row align-items-center">
+                                <% console.log(show) %>
+                                <div class="col col-4 text-end">Genres:</div>
+                                <div class="col col-8">
+                                    <%for (genre of show.genres) {%>
+                                        <form action="/genre/results" class="d-inline-block">
+                                            <input type="hidden" name="currentPage" value="1">
+                                            <input type="hidden" name="searchType" value="genre">
+                                            <input type="hidden" name="genre" value="<%=genre.name%>">
+                                            <button type="submit" class="btn rounded-5 btn-secondary py-0" name="searchQuery" style="font-size:.75rem" value="<%=genre.id%>"><%=genre.name%></button>
+                                        </form>
+                                    <%}%>
+                                </div>
+                            </div>
+                            <% if (show.homepage.length >0) {%>
+                            <div class="row align-items-center mt-2">
+                                <div class="col col-4 text-end">Movie Page: </div>
+                                <div class="col col-8">
+                                    <a href="<%=show.homepage%>" class="btn btn-outline-quarterary py-0 rounded-5" style="text-decoration:none" target="_blank"><%=show.title%> Official Site</a>
+                                </div>
+                            </div>
+                            <% } %>
+                            <div class="row align-items-center mt-2">
+                                <div class="col col-4 text-end">Tagline:</div>
+                                <div class="col col-8">
+                                    <%=show.tagline%>
+                                </div>
+                            </div>
+                            <div class="row align-items-center mt-1">
+                                <div class="col col-4 text-end">Vote Avg:</div>
+                                <div class="col col-4 me-auto text-start justify-self-around position-relative">
+                                    <div class="position-absolute top-50 start-50 translate-middle">
+                                        <h5><%=`${show.vote_average.toFixed(2)}`%></h5>
+                                    </div>
+                                    <canvas data-vote-avg="<%=show.vote_average%>" class="w-100" id="voteChart"></canvas>
+                                    
+                                
+                            </div>
+                        </div>
+                        
 
                     </div>
-                    <p class="my-3">
+                    <p class="my-3 col-12">
                         <%=show.overview%>
                     </p>
                     <div class="row justify-content-between align-items-end">
@@ -62,17 +105,20 @@
 
         <hr>
             <h3 class="text-center">Recommendations</h3>
-                <div class="container" style="width: 100vw">
+                <div class="container mb-4" style="width: 100vw">
                     <div class="row justify-content-center">
                     <%for (recommendation of recommendations) {%>
                         <form action="/description" class="col col-2 col-lg-1 my-1 recommendedMovie">
-                            <button class="btn p-0" name="id" href="/description" value=<%=recommendation.id%>>
-                                <img src="https://image.tmdb.org/t/p/w500<%=recommendation.poster_path%>" alt="Title" class="w-100" />
-                            </button>
+                            <div class="d-inline-block" tabindex="0" data-bs-toggle="popover" data-bs-trigger="hover focus" data-bs-title="<%=recommendation.title%>" data-bs-content="<%=recommendation.overview%>" data-bs-placement="top">
+                                <button class="btn p-0" name="id" href="/description" value="<%=recommendation.id%>">
+                                    <img src="https://image.tmdb.org/t/p/w92<%=recommendation.poster_path%>" alt="Title" class="w-100" />
+                                </button>
+                            </div>
                         </form>
                     <%}%>
                     </div>
                 </div>
+        <% if (watchers.length > 0) {%>
         <hr>
             <h3 class="text-center">User's Who've Also Watched <em><%=show.title%></em></h3>
                 <div class="container" style="width: 100vw">
@@ -82,16 +128,16 @@
                         <form action="/getUsersProfile" class="col col-2 col-lg-1 my-1 recommendedMovie">
                             <input type="hidden" name="username" value="<%=user.user_name%>">
                             <button class="btn p-0 m-0" name="id" value="<%=user.id%>">
-                                <img src="https://placehold.co/100x100/orange/white?text=<%=user.user_name%>" alt="user_name is <%=user.user_name%>" class="w-100" />
+                                <img src="https://placehold.co/80x80/orange/white?text=<%=user.user_name%>" alt="user_name is <%=user.user_name%>" class="w-100" />
                             </button>
                         </form>
                         
                     <%}%>
                     </div>
                 </div>
-
+        <%}%>
+        <% if (reviews.length >0) {%>
         <hr>
-
         <div class="container-fluid">
             <h3 class="text-center">Reviews</h3>
             <%for (review of reviews) {%>
@@ -124,8 +170,11 @@
                                 <small class="text-muted">
                                     <form action="/getUsersProfile" class="p-0 m-0">
                                         <input type="hidden" name="username" value="<%=review.user_name%>">
-                                        <button class="btn p-0 m-0" name="id" value="<%=review.user_id%>">
-                                            By: <%=review.user_name%>
+                                        <button class="btn py-0 m-0" name="id" value="<%=review.user_id%>">
+                                            By: <span class="btn btn-outline-quarterary rounded-pill py-0">
+                                                <%=review.user_name%>
+
+                                            </span>
                                         </button>
                                     </form>
                                 </small>
@@ -137,12 +186,57 @@
             <% } %>
             
         </div>
+        <%}%>
 
         <!-- Modal -->
         <%- include("partials/reviewModal.ejs") %>
         <script src="/js/addToWatchList.js"></script>
         <script src="/js/removeFromWatchList.js"></script>
         <script src="/js/updateReviewModal.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+        <script>
+            const ctx = document.getElementById('voteChart');
+            const voteAvg = ctx.getAttribute('data-vote-avg');
+            const myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Vote Avg', ''],
+                    datasets: [{
+                        label: 'Vote Avg',
+                        data: [voteAvg, 10 - voteAvg],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(255, 99, 132, 0.0)',
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(255, 99, 132, 0)',
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    cutout: '80%',
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            enabled: false
+                        }
+                        
+                    }
+
+                }
+            });
+            
+        </script>
+
+
+
 
 
         <!-- Sidebar -->

@@ -1,13 +1,11 @@
-<%- include('partials/header.ejs', { "pageTitle":'Search Results' }) %>
+<%- include('partials/header.ejs', { "pageTitle":'Genre Results' }) %>
 
 <body>
   
   <%- include("partials/nav.ejs") %>
-
-
   <div class="container" style="margin-top:5rem; margin-bottom: 5rem">
-    <div class="row align-items-center mx-4 mt-4">
-      <h2 class="mt-4 col-8"><span>Results for Search:</span> "<%=searchQuery%>"</h2>
+    <div class="row align-items-center mx-4 mt-4">  
+      <h2 class="mt-4 col-8"><span>Popular for Genre:</span> <%=genre%></h2>
       <div class="col col-4 mt-4 align-self-center text-end pe-5">
         <nav aria-label="Page navigation">
           <ul class="pagination justify-content-end mt-2">
@@ -15,9 +13,9 @@
             <% totalPages = parseInt( totalPages ) %>
             <% let limit = 5 %>
             <% let center = Math.ceil(limit/2) %>
-            <% if (currentPage > 1) { %> 
+            <% if (currentPage > 1) { %>
               <li class="page-item">
-                <a class="page-link text-quarterary" href="?currentPage=<%= parseInt(currentPage - 1) %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Previous">
+                <a class="page-link" href="?currentPage=<%= parseInt(currentPage - 1) %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Previous">
                   <span aria-hidden="true">&laquo;</span>
                 </a>
               </li>
@@ -25,7 +23,7 @@
             <% if (currentPage < center) { %>
               <% for (let i = 1; i <= limit; i++) { %>
                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                  <a class="page-link text-quarterary" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie">
+                  <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre">
                     <%= i %>
                   </a>
                 </li>
@@ -33,19 +31,19 @@
             <%} else if (totalPages - center + 1 > currentPage) { %>
               <% for (let i = parseInt(currentPage - center + 1); i <= parseInt(currentPage+center-1); i++){ %>
                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                  <a class="page-link text-quarterary" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie"><%= i %></a>
+                  <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre"><%= i %></a>
                 </li>
               <% } %>
             <% } else { %>
               <% for (let i = parseInt(totalPages-limit+1); i <= totalPages; i++){ %>
                 <li class="page-item <%= currentPage === i ? 'active' : '' %>">
-                  <a class="page-link text-quarterary" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&searchType=movie"><%= i %></a>
+                  <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre"><%= i %></a>
                 </li>
               <% } %>
             <% } %>
             <% if (currentPage < totalPages) { %>
               <li class="page-item">
-                <a class="page-link text-quarterary" href="?currentPage=<%= parseInt(currentPage + 1) %>&searchQuery=<%= searchQuery %>&searchType=movie" aria-label="Next">
+                <a class="page-link" href="?currentPage=<%= parseInt(currentPage + 1) %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Next">
                   <span aria-hidden="true">&raquo;</span>
                 </a>
               </li>
@@ -60,21 +58,21 @@
               <form action="/description">
                 <button class="btn p-0" name="id" href="/description" value=<%=show.id%>>
                   <div class="more-info bg-black rounded-pill px-3 py-1">More Info</div>
-                  <%if (show.backdrop_path) {%>
+                  <% if (show.backdrop_path){ %>
                     <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://image.tmdb.org/t/p/w300<%=show.backdrop_path%>" alt="image from <%=show.title%>">
 
-                  <%} else {%>
+                  <% } else { %>
                     <img class="custom-card-img-format card-img-top ratio ratio-4x3" src="https://placehold.co/300x150/orange/white?text=<%=show.title.replace(/ /g, '%20')%>" alt="image from <%=show.title%>">
-                  <%}%>
+                  <% } %>
                 </button>
               </form>
               <div class="card-body">
-                <h5 class="card-title text-truncate"><%=show.title%></h5>
+                <h5 class="card-title text-truncate"><%= show.title %></h5>
                 <p class="card-text d-block w-100 overflow-auto w-100 resultMovieOverview" style="height:10rem"><%=show.overview%></p>
                 <div class="container-fluid">
                   <div class="row justify-content-between align-items-end">
                     <div class="col col-6">
-                      <%if (watched.has(show.id)) {%>
+                      <% if (watched.has(show.id)) { %>
                         <a
                           name="removeFromWatchList"
                           id="removeFromWatchList"
@@ -96,11 +94,11 @@
                         <i class="bi bi-bookmark-plus-fill"></i>
                         Watchlist
                         </a>
-                      <%}%>
+                      <% } %>
                       
                     </div>
                     <div class="col col-6">
-                      <% if (reviewed.has(show.id)) {%>
+                      <% if (reviewed.has(show.id)) { %>
                         <a
                           name=""
                           id="btnReviewUpdate"
@@ -113,7 +111,7 @@
                           <i class="bi bi-check"></i>
                           Reviewed
                         </a>
-                      <%} else {%>
+                      <% } else { %>
                         <a
                           name=""
                           id="writeReview"
@@ -126,7 +124,7 @@
                           Review
                           </a
                         >
-                      <%}%>
+                      <% } %>
                       
                     </div>
 

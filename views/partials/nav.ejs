@@ -1,6 +1,15 @@
-<nav class="navbar navbar-expand navbar-dark bg-dark py-3">
+<nav class="navbar navbar-expand bg-body-tertiary navbar-dark bg-dark py-3 fixed-top">
     <div class="container-fluid">
-        <a class="navbar-brand" href="/search"><i class="fi fi-rs-potato"></i>Rotten Potatoes</a>
+        
+        
+        <a class="navbar-brand" href="/search"><span
+            class="badge rounded-pill write-review-btn px-3"
+            >
+            <img width="30" height="30" src="https://img.icons8.com/laces/64/potato.png" alt="potato" style="filter: invert(1);"/> Rotten Potatoes</a>
+            </span
+        >
+        
+      
         <div class="d-flex">
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav">
@@ -26,11 +35,23 @@
                                     <li class="dropdown-item disabled">Admin</li>
                                     <li><a class="dropdown-item" href="/editUsers">Edit Users</a></li>
                                 <%}%>
+                                <li><hr class="dropdown-divider"></li>
+                                <li class="dropdown-item">
+                                    <a class="nav-link" href="/logout">Logout</a>
+                                </li>
+
                             </ul>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="/logout">Logout</a>
-                        </li>
+                        
+                        
+                        <form class="d-none d-sm-flex navBarSearch" role="search" action="/search/results" method="GET">
+                            <input class="form-control me-2" type="search" placeholder="Search For a Movie" aria-label="Search" name="searchQuery">
+                            <button class="btn write-review-btn" type="submit">Search</button>
+                            <input type="hidden" name="currentPage" value="1">
+                            <input type="hidden" name="searchType" value="movie">
+                        </form>
+                        
+                        
 
                     <%}%>
                     

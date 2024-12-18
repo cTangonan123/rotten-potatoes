@@ -1,7 +1,7 @@
 <%- include('partials/header.ejs', { "pageTitle":'Profile' }) %>
 <body>
 <%- include("partials/nav.ejs") %>
-<div class="container-fluid">
+<div class="container-fluid" style="margin-top:5rem;">
   <div class="row justify-content-center align-items-center mt-4">
     <div class="col col-12 text-center">
       <h1>
@@ -88,7 +88,7 @@
                 <button class="btn p-0 position-relative" name="id" href="/description" value=<%=review.movie_id%>>
                   <div class="more-info-poster bg-black rounded-pill px-2 py-1">Movie Page</div>
                     <img
-                    src="https://image.tmdb.org/t/p/w1280<%=review.poster_path%>"
+                    src="https://image.tmdb.org/t/p/w154<%=review.poster_path%>"
                     class="img-fluid rounded-start card-img align-middle custom-poaster-img-format"
                     alt="movie poster of <%=review.title%>"
                     style="max-width:100%"/>

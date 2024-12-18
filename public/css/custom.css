@@ -103,8 +103,6 @@ button:hover .more-info, button:hover .more-info-poster {
    transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
-
-
 @keyframes rise {
   0% {
     transform: translateY(0);
