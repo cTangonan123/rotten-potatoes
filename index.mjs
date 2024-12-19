@@ -451,7 +451,7 @@ app.post('/login', async (req, res) => {
   const match = await bcrypt.compare(password, user.password);
   // console.log(match)
   // const match = password === user.password;
-  if (!match) {
+  if (match) {
     req.session.user_id = user.id;
     req.session.user_name = user.user_name;
     req.session.is_admin = user.is_admin;
