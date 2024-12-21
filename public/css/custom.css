@@ -109,6 +109,17 @@ button:hover .more-info, button:hover .more-info-poster {
    transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
 }
 
+.footerLink {
+  transform: translateY(0);
+  color: rgba(222, 231, 231, 1);
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+.footerLink:hover {
+  transform: translateY(-6px);
+  color: #942b2f;
+  cursor:pointer;
+}
+
 @keyframes rise {
   0% {
     transform: translateY(0);
