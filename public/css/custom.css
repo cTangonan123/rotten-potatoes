@@ -3,8 +3,9 @@
 }
 
 .custom-hover:hover {
-  translate: 0 -0.2em;
-  transition: 0.3s;
+  translate: 0 -0.4em;
+  transition: 0.5s;
+  background-color: rgb(30, 30, 30);
 }
 
 .bg-img {
