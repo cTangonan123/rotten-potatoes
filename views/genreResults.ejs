@@ -138,6 +138,51 @@
     </div>
   </div>
 
+  <div class="container">
+    <div class="row justify-content-center">
+      <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center mt-2">
+          <% if (currentPage > 1) { %>
+            <li class="page-item">
+              <a class="page-link" href="?currentPage=<%= parseInt(currentPage - 1) %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+          <% } %>
+          <% if (currentPage < center) { %>
+            <% for (let i = 1; i <= limit; i++) { %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre">
+                  <%= i %>
+                </a>
+              </li>
+            <% } %>
+          <%} else if (totalPages - center + 1 > currentPage) { %>
+            <% for (let i = parseInt(currentPage - center + 1); i <= parseInt(currentPage+center-1); i++){ %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre"><%= i %></a>
+              </li>
+            <% } %>
+          <% } else { %>
+            <% for (let i = parseInt(totalPages-limit+1); i <= totalPages; i++){ %>
+              <li class="page-item <%= currentPage === i ? 'active' : '' %>">
+                <a class="page-link" href="?currentPage=<%= i %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre"><%= i %></a>
+              </li>
+            <% } %>
+          <% } %>
+          <% if (currentPage < totalPages) { %>
+            <li class="page-item">
+              <a class="page-link" href="?currentPage=<%= parseInt(currentPage + 1) %>&searchQuery=<%= searchQuery %>&genre=<%= genre %>&searchType=genre" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          <% } %>
+        </ul>
+      </nav>
+    </div>
+  </div>
+
+
   <!-- Modal -->
   <%- include("partials/reviewModal.ejs") %>
   <script src="/js/addToWatchList.js"></script>

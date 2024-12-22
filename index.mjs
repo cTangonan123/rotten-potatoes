@@ -328,6 +328,17 @@ app.get('/logout', (req, res) => {
   // res.redirect('/');
 });
 
+// Handles rendering of the about view
+app.get('/about', isAuthenticated, getWatchListForUser, getPopularMovies, async (req, res) => {
+  let user_id = req.session.user_id;
+  let user_name = req.session.user_name;
+  let is_admin = req.session.is_admin;
+  let watchlist = req.session.user_watchlist;
+  let popularMovies = req.session.popularMovies;
+
+  res.render('about', { user_id, watchlist, popularMovies, is_admin, user_name });
+});
+
 /* API Specific(associated with client-side js) GET Requests */
 
 // Handles the retrieval of a specific review from the database

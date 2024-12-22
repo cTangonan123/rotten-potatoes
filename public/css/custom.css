@@ -2,6 +2,12 @@
   border-radius: 30px;
 }
 
+.custom-hover:hover {
+  translate: 0 -0.4em;
+  transition: 0.5s;
+  background-color: rgb(30, 30, 30);
+}
+
 .bg-img {
   background-image: url(../img/cinema.jpg);
   background-repeat: no-repeat;
@@ -101,6 +107,18 @@ button:hover .more-info, button:hover .more-info-poster {
    scale: 1.1;
    transform: translateY(-6px);
    transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+
+
+.footerLink {
+  transform: translateY(0);
+  color: rgba(222, 231, 231, 1);
+  transition: all 0.3s cubic-bezier(0.455, 0.03, 0.515, 0.955);
+}
+.footerLink:hover {
+  transform: translateY(-6px);
+  color: #942b2f;
+  cursor:pointer;
 }
 
 @keyframes rise {
